@@ -1,8 +1,10 @@
 srcdir=./src
+libsrcdir=$(srcdir)/nesromtool
+
 builtdir=./bin
 builtfile=$(builtdir)/nesromtool2
 
-files=$(srcdir)/main.c
+files=$(libsrcdir)/header.c $(libsrcdir)/prg.c $(libsrcdir)/chr.c $(srcdir)/main.c 
 
 all: $(builtfile)
 

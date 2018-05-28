@@ -5,33 +5,8 @@
 #include <assert.h>
 #include <stdbool.h>
 
-#define NES_HEADER_SIZE 16
-#define NES_MAGIC_WORD "NES\x1a"
-#define NES_MAGIC_WORD_SIZE 4
+#include "nesromtool.h"
 
-#define NES_PRG_BANK_SIZE 16384
-#define NES_PRG_BANK_MAX_COUNT 64
-
-#define NES_CHR_BANK_SIZE 8192
-#define NES_CHR_TILE_SIZE 16
-#define NES_CHR_TILE_COUNT 512 /* NES_CHR_BANK_SIZE / NES_CHR_TILE_SIZE */
-
-#define nes_chr_offset(header, chr_index) NES_HEADER_SIZE + (header->prg_count * NES_PRG_BANK_SIZE) + (chr_index * NES_CHR_BANK_SIZE)
-
-typedef struct nesheader_t {
-  char magic_word[NES_MAGIC_WORD_SIZE];
-  unsigned char prg_count;
-  unsigned char chr_count;
-  unsigned char the_rest[10];
-} nesheader_t;
-
-typedef struct neschrbank_t {
-  unsigned char tile[NES_CHR_TILE_COUNT][NES_CHR_TILE_SIZE];
-} neschrbank_t;
-
-typedef struct nesprgbank_t {
-  unsigned char data[NES_PRG_BANK_SIZE];
-} nesprgbank_t;
 
 /* typedef struct nesverify_result_t { */
   /* unsigned char has_error = 0; */
@@ -39,14 +14,6 @@ typedef struct nesprgbank_t {
 /* } nesverify_result_t; */
 
 // validate, chr, prg, tile
-
-bool nesvalidate_header_magic_word(nesheader_t* header) {
-  return strncmp(header->magic_word, NES_MAGIC_WORD, NES_MAGIC_WORD_SIZE) == 0;
-}
-
-bool nesvalidate_header_prg_count(nesheader_t* header) {
-  return header->prg_count > 0 && header->prg_count <= NES_PRG_BANK_MAX_COUNT;
-}
 
 /* nesverify_result_t* nesverify (filepath) { */
   /* nesverify_result_t = (nesverify_result_t*)malloc(sizeof(nesverify_result_t)); */
