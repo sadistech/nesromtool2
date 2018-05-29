@@ -1,9 +1,5 @@
 #include "header.h"
 
-bool nesvalidate_header(nesheader_t* header) {
-  return true;
-}
-
 bool nesvalidate_header_magic_word(nesheader_t* header) {
   return strncmp(header->magic_word, NES_MAGIC_WORD, NES_MAGIC_WORD_SIZE) == 0;
 }
