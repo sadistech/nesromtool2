@@ -1,5 +1,9 @@
 #include "error.h"
 
+void nrt_error_init(nrt_error_t *error) {
+  error->count = 0;
+}
+
 bool nrt_is_error(nrt_error_t *error) {
   return error->count > 0;
 }

@@ -16,6 +16,7 @@ typedef struct nrt_error_t {
   char *errors[NRT_MAX_ERRORS];
 } nrt_error_t;
 
+void nrt_error_init(nrt_error_t *error);
 bool nrt_is_error(nrt_error_t *error);
 void nrt_append_error(nrt_error_t *error, char *msg);
 
