@@ -4,58 +4,29 @@
 #include <string.h>
 #include <assert.h>
 #include <stdbool.h>
+#include <libgen.h>
 
 #include "nesromtool.h"
-
-
-/* typedef struct nesverify_result_t { */
-  /* unsigned char has_error = 0; */
-  /* char *msg; */
-/* } nesverify_result_t; */
-
-// validate, chr, prg, tile
-
-/* nesverify_result_t* nesverify (filepath) { */
-  /* nesverify_result_t = (nesverify_result_t*)malloc(sizeof(nesverify_result_t)); */
-
-  /* nesheader_t *header = (nesheader_t*)malloc(sizeof(nesheader_t)); */
-
-/* } */
 
 // verify <path>
 void action_verify(char *filepath) {
   FILE *ifile = NULL;
-  nesheader_t *header = (nesheader_t*)malloc(sizeof(nesheader_t));
 
   if (!(ifile = fopen(filepath, "r+"))) {
     fprintf(stderr, "Failed to open file.");
     exit(EXIT_FAILURE);
   }
 
-  if (! fread(header, 1, sizeof(nesheader_t), ifile )) {
-    fprintf(stderr, "Failed to read header.\n");
+  nrt_error_t *error = NRT_ERROR_ALLOC;
+
+  nrt_validate_file(ifile, error);
+
+  if (nrt_is_error(error)) {
+    printf("%s: FAIL\n", basename(filepath));
     exit(EXIT_FAILURE);
-  }
-
-  bool (*checks[2])(nesheader_t *) = {
-    &nesvalidate_header_magic_word,
-    &nesvalidate_header_prg_count
-  };
-
-  int i = 0;
-  bool result = true;
-  for (i = 0; i < sizeof(checks); i++) {
-    if (! checks[i](header)) {
-      result = false;
-    }
-  }
-
-  if (result) {
-    printf("OK\n");
-    exit(EXIT_SUCCESS);
   } else {
-    printf("FAIL\n");
-    exit(EXIT_FAILURE);
+    printf("%s: OK\n", basename(filepath));
+    exit(EXIT_SUCCESS);
   }
 }
 

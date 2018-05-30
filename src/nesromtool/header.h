@@ -10,6 +10,8 @@
 #define NES_MAGIC_WORD "NES\x1a"
 #define NES_MAGIC_WORD_SIZE 4
 
+#define NRT_HEADER_ALLOC (nesheader_t*)malloc(sizeof(nesheader_t))
+
 typedef struct nesheader_t {
   char magic_word[NES_MAGIC_WORD_SIZE];
   unsigned char prg_count;
@@ -17,8 +19,7 @@ typedef struct nesheader_t {
   unsigned char the_rest[10];
 } nesheader_t;
 
-bool nesvalidate_header(nesheader_t* header);
-bool nesvalidate_header_magic_word(nesheader_t* header);
-bool nesvalidate_header_prg_count(nesheader_t* header);
+bool nrt_validate_header_magic_word(nesheader_t* header);
+bool nrt_validate_header_prg_count(nesheader_t* header);
 
 #endif
