@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <libgen.h>
 
-#include "nesromtool.h"
+#include "nrt.h"
 
 // verify <path>
 void action_verify(char *filepath) {
@@ -41,35 +41,6 @@ int main(int argc, char **argv, char **env) {
     perror("No action.");
     exit(EXIT_FAILURE);
   }
-
-
-  /* printf("Gonna [%s] open %s\n", action, filepath); */
-
-
-  /* assert(strncmp(header->magic_word, NES_MAGIC_WORD, NES_MAGIC_WORD_SIZE)); */
-
-
-  /* printf("Read header: %d CHR and %d PRG\n", header->chr_count, header->prg_count); */
-
-  /* // let's read in the first bank and dump the first tile */
-  /* assert(header->chr_count >= 1); */
-
-  /* neschrbank_t *chr_bank = (neschrbank_t*)malloc(sizeof(neschrbank_t)); */
-
-  /* assert(sizeof(chr_bank->tile[0]) == NES_CHR_TILE_SIZE); */
-
-  /* fseek(ifile, nes_chr_offset(header, 0), SEEK_SET); */
-
-  /* // now read */
-  /* if (! fread(chr_bank, 1, NES_CHR_BANK_SIZE, ifile)) { */
-    /* perror("Failed to read CHR bank.\n"); */
-    /* exit(EXIT_FAILURE); */
-  /* } */
-
-  /* char tile[NES_CHR_TILE_SIZE]; */
-  /* strncpy(tile, chr_bank->tile[0], NES_CHR_TILE_SIZE); */
-
-  /* printf("%02x %02x %02x %02x %02x %02x %02x %02x\n", tile[0], tile[1], tile[2], tile[3], tile[4], tile[5], tile[6], tile[7]); */
 
   return 0;
 }

@@ -5,10 +5,10 @@
  * pass it a pre-allocated nesrom_status_t
  */
 void nrt_validate_file(FILE *rom, nrt_error_t *error) {
-  nesheader_t *header = NRT_HEADER_ALLOC;
+  nrt_header_t *header = NRT_HEADER_ALLOC;
   char msg[256] = "";
 
-  if (! fread(header, 1, sizeof(nesheader_t), rom) ) {
+  if (! fread(header, 1, sizeof(nrt_header_t), rom) ) {
     nrt_append_error(error, "Failed to read header from file.");
     return;
   }

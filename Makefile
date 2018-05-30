@@ -1,8 +1,8 @@
 srcdir=./src
-libsrcdir=$(srcdir)/nesromtool
+libsrcdir=$(srcdir)/nrt
 
 builtdir=./bin
-builtfile=$(builtdir)/nesromtool2
+builtfile=$(builtdir)/nrt
 
 files=$(libsrcdir)/header.c $(libsrcdir)/error.c $(libsrcdir)/util.c $(libsrcdir)/prg.c $(libsrcdir)/chr.c $(srcdir)/main.c 
 

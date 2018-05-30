@@ -1,5 +1,5 @@
-#ifndef _NESROMTOOL_ERROR_H_
-#define _NESROMTOOL_ERROR_H_
+#ifndef _NRT_ERROR_H_
+#define _NRT_ERROR_H_
 
 #include <stdio.h>
 #include <stdlib.h>

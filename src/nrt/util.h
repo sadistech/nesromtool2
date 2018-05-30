@@ -1,5 +1,5 @@
-#ifndef _NESROMTOOL_UTIL_H_
-#define _NESROMTOOL_UTIL_H_
+#ifndef _NRT_UTIL_H_
+#define _NRT_UTIL_H_
 
 #include <stdlib.h>
 #include <stdio.h>
