@@ -4,15 +4,16 @@ libsrcdir=$(srcdir)/nrt
 builtdir=./bin
 builtfile=$(builtdir)/nrt
 
-files=$(libsrcdir)/header.c $(libsrcdir)/error.c $(libsrcdir)/util.c $(libsrcdir)/prg.c $(libsrcdir)/chr.c $(srcdir)/main.c 
+srcfiles=$(libsrcdir)/error.c $(libsrcdir)/util.c $(libsrcdir)/prg.c $(libsrcdir)/chr.c $(libsrcdir)/header.c $(srcdir)/main.c 
+headers=$(libsrcdir)/error.h $(libsrcdir)/util.h $(libsrcdir)/prg.h $(libsrcdir)/chr.h $(libsrcdir)/header.h $(srcdir)/nrt.h
 
 all: $(builtfile)
 
 $(builtdir):
 	mkdir $(builtdir)
 
-$(builtfile): ./bin $(files)
-	gcc -o $(builtfile) $(files)
+$(builtfile): ./bin $(srcfiles) $(headers)
+	gcc -o $(builtfile) $(srcfiles)
 
 run: $(builtfile) all
 	$(builtfile) verify ./mario3.nes
