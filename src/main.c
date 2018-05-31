@@ -9,11 +9,12 @@
 #include "nrt.h"
 
 // verify <path>
-void action_verify(char *filepath) {
+void action_verify(char **argv) {
+  char *filepath = argv[0];
   FILE *ifile = NULL;
 
   if (!(ifile = fopen(filepath, "r+"))) {
-    fprintf(stderr, "Failed to open file.");
+    fprintf(stderr, "Failed to open file.\n");
     exit(EXIT_FAILURE);
   }
 
@@ -30,13 +31,56 @@ void action_verify(char *filepath) {
   }
 }
 
+// nrt extract chr <index> <rom> <outfile>
+void action_extract(char **argv) {
+  char *type = *(argv++);
+  char *text_index = *(argv++);
+  char *rompath = *(argv++);
+  char *outpath = *(argv++);
+
+  int index = atoi(text_index);
+
+  FILE *rom = NULL;
+  FILE *outfile = NULL;
+
+  printf("Going to extract a %s from %s to %s\n", type, rompath, outpath);
+
+  if (!(rom = fopen(rompath, "r+"))) {
+    fprintf(stderr, "Failed to open file.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  nrt_chrbank_t *chr = NRT_CHR_ALLOC;
+
+  if (nrt_extract_chr(rom, index, chr) != 1) {
+    fprintf(stderr, "Failed to read CHR bank.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  // ok, now write the file.
+  if (!(outfile = fopen(outpath, "w+"))) {
+    fprintf(stderr, "Failed to open CHR outfile.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  if (fwrite(chr, NRT_CHR_BANK_SIZE, 1, outfile) != 1) {
+    fprintf(stderr, "Failed to write CHR data to file.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  fclose(rom);
+  fclose(outfile);
+  free(chr);
+}
+
 int main(int argc, char **argv, char **env) {
   char *appname = *(argv++);
   char *action = *(argv++);
-  char *filepath = *(argv++);
 
   if (strcmp(action, "verify") == 0) {
-    action_verify(filepath);
+    action_verify(argv);
+  } else if ( strcmp(action, "extract") == 0 ) {
+    action_extract(argv);
   } else {
     perror("No action.");
     exit(EXIT_FAILURE);
