@@ -49,24 +49,43 @@ void action_extract(char **argv) {
     nrt_die("Failed to open file.");
   }
 
-  nrt_chrbank_t *chr = NRT_CHR_ALLOC;
+  if (strcmp(type, "prg") == 0) {
+    nrt_prgbank_t *prg = NRT_PRG_ALLOC;
 
-  if (nrt_extract_chr(rom, index, chr) != 1) {
-    nrt_die("Failed to read CHR bank.");
-  }
+    if (nrt_extract_prg(rom, index, prg) != 1) {
+      nrt_die("Failed to read PRG bank");
+    }
 
-  // ok, now write the file.
-  if (!(outfile = fopen(outpath, "w+"))) {
-    nrt_die("Failed to open CHR outfile.");
-  }
+    if (!(outfile = fopen(outpath, "w+"))) {
+      nrt_die("Failed to open PRG outfile.");
+    }
 
-  if (fwrite(chr, NRT_CHR_BANK_SIZE, 1, outfile) != 1) {
-    nrt_die("Failed to write CHR data to file.");
+    if (fwrite(prg, NRT_PRG_BANK_SIZE, 1, outfile) != 1) {
+      nrt_die("Failed to write PRG data to file.");
+    }
+
+    free(prg);
+  } else if (strcmp(type, "chr") == 0) {
+    nrt_chrbank_t *chr = NRT_CHR_ALLOC;
+
+    if (nrt_extract_chr(rom, index, chr) != 1) {
+      nrt_die("Failed to read CHR bank.");
+    }
+
+    // ok, now write the file.
+    if (!(outfile = fopen(outpath, "w+"))) {
+      nrt_die("Failed to open CHR outfile.");
+    }
+
+    if (fwrite(chr, NRT_CHR_BANK_SIZE, 1, outfile) != 1) {
+      nrt_die("Failed to write CHR data to file.");
+    }
+
+    free(chr);
   }
 
   fclose(rom);
   fclose(outfile);
-  free(chr);
 }
 
 int main(int argc, char **argv, char **env) {
