@@ -1,4 +1,5 @@
 #include "header.h"
+#include "prg.h"
 
 int nrt_header_extract(FILE *rom, nrt_header_t *header) {
   fseek(rom, 0, SEEK_SET);

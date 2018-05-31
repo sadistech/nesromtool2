@@ -4,8 +4,6 @@
 #include <stdbool.h>
 #include <string.h>
 #include "util.h"
-#include "prg.h"
-#include "chr.h"
 
 #define NRT_HEADER_SIZE 16
 #define NRT_MAGIC_WORD "NES\x1a"

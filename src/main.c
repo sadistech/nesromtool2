@@ -49,8 +49,18 @@ void action_extract(char **argv) {
     nrt_die("Failed to open file.");
   }
 
+  nrt_header_t *header = NRT_HEADER_ALLOC;
+
+  if (fread(header, NRT_HEADER_SIZE, 1, rom) != 1) {
+    nrt_die("Failed reading the header of the file.");
+  }
+
   if (strcmp(type, "prg") == 0) {
     nrt_prgbank_t *prg = NRT_PRG_ALLOC;
+
+    if (!nrt_prg_index_valid(header, index)) {
+      nrt_die("Invalid PRG bank index: %d (There are %d PRG banks)", index, header->prg_count);
+    }
 
     if (nrt_extract_prg(rom, index, prg) != 1) {
       nrt_die("Failed to read PRG bank");
@@ -68,7 +78,11 @@ void action_extract(char **argv) {
   } else if (strcmp(type, "chr") == 0) {
     nrt_chrbank_t *chr = NRT_CHR_ALLOC;
 
-    if (nrt_extract_chr(rom, index, chr) != 1) {
+    if (!nrt_prg_index_valid(header, index)) {
+      nrt_die("Invalid CHR bank index: %d (There are %d CHR banks)", index, header->chr_count);
+    }
+
+    if (nrt_extract_chr(rom, header, index, chr) != 1) {
       nrt_die("Failed to read CHR bank.");
     }
 
@@ -84,6 +98,7 @@ void action_extract(char **argv) {
     free(chr);
   }
 
+  free(header);
   fclose(rom);
   fclose(outfile);
 }

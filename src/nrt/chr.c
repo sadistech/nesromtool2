@@ -1,20 +1,20 @@
 #include "chr.h"
+#include "prg.h"
 
-int nrt_extract_chr(FILE *rom, int index, nrt_chrbank_t *chr) {
-  nrt_header_t *header = NRT_HEADER_ALLOC;
-  if (nrt_header_extract(rom, header) != 1) {
-    nrt_die("Failed to extract header.");
-  }
+int nrt_chr_offset(nrt_header_t *header, int chr_index) {
+  return (NRT_HEADER_SIZE + (header->prg_count * NRT_PRG_BANK_SIZE)
+      + (chr_index * NRT_CHR_BANK_SIZE));
+}
 
-  if ((index - 1) > header->chr_count) {
-    nrt_die("CHR index is out of bounds (%d > %d)", index, header->chr_count);
-  }
+bool nrt_chr_index_valid(nrt_header_t *header, int chr_index) {
+  return (chr_index >= 0 && header->chr_count < chr_index + 1);
+}
 
+int nrt_extract_chr(FILE *rom, nrt_header_t *header, int index, nrt_chrbank_t *chr) {
   int offset = nrt_chr_offset(header, index);
-
-  free(header);
 
   fseek(rom, offset, SEEK_SET);
 
   return fread(chr, sizeof(nrt_chrbank_t), 1, rom);
 }
+

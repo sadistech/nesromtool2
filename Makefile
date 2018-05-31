@@ -4,8 +4,8 @@ libsrcdir=$(srcdir)/nrt
 builtdir=./bin
 builtfile=$(builtdir)/nrt
 
-srcfiles=$(libsrcdir)/error.c $(libsrcdir)/util.c $(libsrcdir)/prg.c $(libsrcdir)/chr.c $(libsrcdir)/header.c $(srcdir)/main.c 
-headers=$(libsrcdir)/error.h $(libsrcdir)/util.h $(libsrcdir)/prg.h $(libsrcdir)/chr.h $(libsrcdir)/header.h $(srcdir)/nrt.h
+srcfiles=$(libsrcdir)/error.c $(libsrcdir)/util.c $(libsrcdir)/header.c $(libsrcdir)/prg.c $(libsrcdir)/chr.c $(srcdir)/main.c 
+headers=$(libsrcdir)/error.h $(libsrcdir)/util.h $(libsrcdir)/header.h $(libsrcdir)/prg.h $(libsrcdir)/chr.h $(srcdir)/nrt.h
 
 all: $(builtfile)
 
