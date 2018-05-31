@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <string.h>
+#include "util.h"
 #include "prg.h"
 #include "chr.h"
 

@@ -23,3 +23,5 @@ void nrt_validate_file(FILE *rom, nrt_error_t *error) {
     nrt_append_error(error, msg);
   }
 }
+
+

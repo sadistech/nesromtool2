@@ -46,26 +46,22 @@ void action_extract(char **argv) {
   printf("Going to extract a %s from %s to %s\n", type, rompath, outpath);
 
   if (!(rom = fopen(rompath, "r+"))) {
-    fprintf(stderr, "Failed to open file.\n");
-    exit(EXIT_FAILURE);
+    nrt_die("Failed to open file.");
   }
 
   nrt_chrbank_t *chr = NRT_CHR_ALLOC;
 
   if (nrt_extract_chr(rom, index, chr) != 1) {
-    fprintf(stderr, "Failed to read CHR bank.\n");
-    exit(EXIT_FAILURE);
+    nrt_die("Failed to read CHR bank.");
   }
 
   // ok, now write the file.
   if (!(outfile = fopen(outpath, "w+"))) {
-    fprintf(stderr, "Failed to open CHR outfile.\n");
-    exit(EXIT_FAILURE);
+    nrt_die("Failed to open CHR outfile.");
   }
 
   if (fwrite(chr, NRT_CHR_BANK_SIZE, 1, outfile) != 1) {
-    fprintf(stderr, "Failed to write CHR data to file.\n");
-    exit(EXIT_FAILURE);
+    nrt_die("Failed to write CHR data to file.");
   }
 
   fclose(rom);
