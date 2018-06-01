@@ -19,6 +19,7 @@ typedef struct nrt_header_t {
 } nrt_header_t;
 
 int nrt_header_extract(FILE *rom, nrt_header_t *header);
+bool nrt_validate_header(nrt_header_t *header);
 bool nrt_validate_header_magic_word(nrt_header_t* header);
 bool nrt_validate_header_prg_count(nrt_header_t* header);
 
