@@ -7,7 +7,7 @@ int nrt_chr_offset(nrt_header_t *header, int chr_index) {
 }
 
 bool nrt_chr_index_valid(nrt_header_t *header, int chr_index) {
-  return (chr_index >= 0 && header->chr_count < chr_index + 1);
+  return (chr_index >= 0 && header->chr_count > chr_index);
 }
 
 int nrt_extract_chr(FILE *rom, nrt_header_t *header, int index, nrt_chrbank_t *chr) {
