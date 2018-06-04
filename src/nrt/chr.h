@@ -6,15 +6,15 @@
 #include <stdbool.h>
 
 #include "header.h"
+#include "tile.h"
 
 #define NRT_CHR_BANK_SIZE 8192
-#define NRT_CHR_TILE_SIZE 16
-#define NRT_CHR_TILE_COUNT 512 /* NRT_CHR_BANK_SIZE / NRT_CHR_TILE_SIZE */
+#define NRT_CHR_TILE_COUNT 512 /* NRT_CHR_BANK_SIZE / NRT_TILE_SIZE */
 
 #define NRT_CHR_ALLOC (nrt_chrbank_t*)malloc(sizeof(nrt_chrbank_t))
 
 typedef struct nrt_chrbank_t {
-  unsigned char tile[NRT_CHR_TILE_COUNT][NRT_CHR_TILE_SIZE];
+  nrt_tile_t tile[NRT_CHR_TILE_COUNT];
 } nrt_chrbank_t;
 
 int nrt_chr_offset(nrt_header_t *header, int chr_index);
