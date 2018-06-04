@@ -25,6 +25,7 @@ run: $(builtfile) all
 clean:
 	rm -rf $(builtdir) $(builttest)
 
-test: $(builtdir) $(srcfiles) $(headers) $(testheaders) $(testfiles)
-	gcc -o $(builttest) $(srcfiles) $(testfiles)
-	$(builttest)
+test: .PHONY
+	./runtests.sh
+
+.PHONY:
