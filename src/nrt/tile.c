@@ -29,7 +29,7 @@ void nrt_bitmap_to_tile(nrt_tile_bitmap_t *bitmap, nrt_tile_t *tile) {
 
       // write the bit to each channel
       pixel = bitmap->pixels[x + (y * NRT_TILE_WIDTH_PX)];
-      tile->chan_a[y] += pixel % 2;
+      tile->chan_a[y] += pixel & 1;
       tile->chan_b[y] += pixel >> 1 & 1;
     }
   }
