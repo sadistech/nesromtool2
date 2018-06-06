@@ -3,34 +3,53 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-test_total=0
-error_total=0
+run_test() {
+  local testsrc="$1"
 
-mapfile -t sourcefiles < <( find src -name '*.c' -not -name 'main.c' )
-
-for testsrc in tests/*; do
-  tempfile="$( mktemp /tmp/nrt_test.XXXXXX )"
+  local tempfile="$( mktemp /tmp/nrt_test.XXXXXX )"
   test_total=$(( test_total + 1 ))
-  testname="$( basename "$testsrc" '.c' )"
+  local testname="$( basename "$testsrc" '.c' )"
 
   if ! gcc -Isrc -o "$tempfile" "${sourcefiles[@]}" "$testsrc"; then
     printf "[ FAIL ] %s\n" "$testname"
     error_total=$(( error_total + 1 ))
-    continue
+    failed_tests+=("$testname")
+    return
   fi
 
   if ! "$tempfile"; then
     printf "[ FAIL ] %s\n" "$testname"
     error_total=$(( error_total + 1 ))
+    failed_tests+=("$testname")
     rm -rf "$tempfile"
-    continue
+    return
   fi
 
   printf "[ PASS ] %s\n" "$testname"
-done
+}
+
+test_total=0
+error_total=0
+failed_tests=()
+
+mapfile -t sourcefiles < <( find src -name '*.c' -not -name 'main.c' )
+
+if [[ "$#" -eq 0 ]]; then
+  for testsrc in tests/*; do
+    run_test "$testsrc"
+  done
+else
+  for testsrc in "$@"; do
+    run_test "$testsrc"
+  done
+fi
 
 printf "\n"
 printf "Total tests: %d\nErrors: %d\n\n" "$test_total" "$error_total"
+
+printf "Failures:\n"
+printf " - %s\n" "${failed_tests[@]}"
+printf "\n"
 
 if (( error_total )); then
   exit 1
