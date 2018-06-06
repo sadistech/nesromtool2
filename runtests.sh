@@ -14,6 +14,7 @@ run_test() {
     printf "[ FAIL ] %s\n" "$testname"
     error_total=$(( error_total + 1 ))
     failed_tests+=("$testname")
+    rm -rf "$tempfile"
     return
   fi
 
@@ -24,6 +25,8 @@ run_test() {
     rm -rf "$tempfile"
     return
   fi
+
+  rm -rf "$tempfile"
 
   printf "[ PASS ] %s\n" "$testname"
 }
