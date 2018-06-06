@@ -11,14 +11,14 @@
 #define NRT_CHR_BANK_SIZE 8192
 #define NRT_CHR_TILE_COUNT 512 /* NRT_CHR_BANK_SIZE / NRT_TILE_SIZE */
 
-#define NRT_CHR_ALLOC (nrt_chrbank_t*)malloc(sizeof(nrt_chrbank_t))
+#define NRT_CHR_ALLOC (nrt_chrbank*)malloc(sizeof(nrt_chrbank))
 
-typedef struct nrt_chrbank_t {
-  nrt_tile_t tile[NRT_CHR_TILE_COUNT];
-} nrt_chrbank_t;
+typedef struct nrt_chrbank {
+  nrt_tile tile[NRT_CHR_TILE_COUNT];
+} nrt_chrbank;
 
-int nrt_chr_offset(nrt_header_t *header, int chr_index);
-bool nrt_chr_index_valid(nrt_header_t *header, int chr_index);
-int nrt_extract_chr(FILE *rom, nrt_header_t *header, int index, nrt_chrbank_t *chr);
+int nrt_chr_offset(nrt_header *header, int chr_index);
+bool nrt_chr_index_valid(nrt_header *header, int chr_index);
+int nrt_extract_chr(FILE *rom, nrt_header *header, int index, nrt_chrbank *chr);
 
 #endif

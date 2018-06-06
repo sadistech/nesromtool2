@@ -2,7 +2,7 @@
 #include "nrt.h"
 
 int main() {
-  nrt_chrbank_t *chr = NRT_CHR_ALLOC;
+  nrt_chrbank *chr = NRT_CHR_ALLOC;
 
   assert(chr);
   free(chr);

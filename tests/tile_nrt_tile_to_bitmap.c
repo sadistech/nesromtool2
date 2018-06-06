@@ -2,8 +2,8 @@
 #include <assert.h>
 
 int main() {
-  nrt_tile_t *tile = NRT_TILE_ALLOC;
-  nrt_tile_bitmap_t *bitmap = NRT_TILE_BITMAP_ALLOC;
+  nrt_tile *tile = NRT_TILE_ALLOC;
+  nrt_tile_bitmap *bitmap = NRT_TILE_BITMAP_ALLOC;
 
   assert(tile);
   assert(bitmap);

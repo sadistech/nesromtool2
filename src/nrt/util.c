@@ -2,13 +2,13 @@
 
 /*
  * return whether the file is ok or not
- * pass it a pre-allocated nesrom_status_t
+ * pass it a pre-allocated nesrom_status
  */
-void nrt_validate_file(FILE *rom, nrt_error_t *error) {
-  nrt_header_t *header = NRT_HEADER_ALLOC;
+void nrt_validate_file(FILE *rom, nrt_error *error) {
+  nrt_header *header = NRT_HEADER_ALLOC;
   char msg[256] = "";
 
-  if (! fread(header, 1, sizeof(nrt_header_t), rom) ) {
+  if (! fread(header, 1, sizeof(nrt_header), rom) ) {
     nrt_append_error(error, "Failed to read header from file.");
     return;
   }

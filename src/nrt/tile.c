@@ -3,7 +3,7 @@
 // tile:
 // A0 A1 A2 A3 A4 A5 A6 A7  |  B0 B1 B2 B3 B4 B5 B6 B7
 
-void nrt_tile_to_bitmap(nrt_tile_t *tile, nrt_tile_bitmap_t *bitmap) {
+void nrt_tile_to_bitmap(nrt_tile *tile, nrt_tile_bitmap *bitmap) {
   int i, j;
 
   // iterate over each byte (row of pixels)
@@ -16,7 +16,7 @@ void nrt_tile_to_bitmap(nrt_tile_t *tile, nrt_tile_bitmap_t *bitmap) {
   }
 }
 
-void nrt_bitmap_to_tile(nrt_tile_bitmap_t *bitmap, nrt_tile_t *tile) {
+void nrt_bitmap_to_tile(nrt_tile_bitmap *bitmap, nrt_tile *tile) {
   // iterate over the bitmap pixels
   int x, y;
   int pixel;
@@ -35,7 +35,7 @@ void nrt_bitmap_to_tile(nrt_tile_bitmap_t *bitmap, nrt_tile_t *tile) {
   }
 }
 
-int nrt_get_tile_pixel(unsigned int row, unsigned int col, nrt_tile_t *tile) {
+int nrt_get_tile_pixel(unsigned int row, unsigned int col, nrt_tile *tile) {
   return nrt_tile_bits_to_pixel(
       NRT_GET_BIT(col, tile->chan_a[row]),
       NRT_GET_BIT(col, tile->chan_b[row])

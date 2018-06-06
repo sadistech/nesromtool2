@@ -2,7 +2,7 @@
 #include <assert.h>
 
 int main() {
-  nrt_tile_t *tile = NRT_TILE_ALLOC;
+  nrt_tile *tile = NRT_TILE_ALLOC;
 
   assert(tile);
 

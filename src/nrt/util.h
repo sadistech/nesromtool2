@@ -12,7 +12,7 @@
 #define nrt_diec(code, f, ...) fprintf(stderr, f"\n", ##__VA_ARGS__); exit(code)
 #define nrt_die(f, ...) nrt_diec(EXIT_FAILURE, f, ##__VA_ARGS__)
 
-void nrt_validate_file(FILE *rom, nrt_error_t *status);
+void nrt_validate_file(FILE *rom, nrt_error *status);
 
 #endif
 

@@ -1,26 +1,26 @@
 #include "nrt.h"
 
-nrt_prgbank_list_t* nrt_prgbank_list_create(nrt_prgbank_t *prg, nrt_prgbank_list_t *next) {
-  nrt_prgbank_list_t *list = NRT_PRG_LIST_ALLOC;
+nrt_prgbank_list* nrt_prgbank_list_create(nrt_prgbank *prg, nrt_prgbank_list *next) {
+  nrt_prgbank_list *list = NRT_PRG_LIST_ALLOC;
   list->prg = prg;
   list->next = next;
 
   return list;
 }
 
-nrt_prgbank_list_t* nrt_prgbank_list_prepend(nrt_prgbank_list_t *list, nrt_prgbank_t *prg) {
+nrt_prgbank_list* nrt_prgbank_list_prepend(nrt_prgbank_list *list, nrt_prgbank *prg) {
   return nrt_prgbank_list_insert(list, prg, 0);
 }
 
-nrt_prgbank_list_t* nrt_prgbank_list_append(nrt_prgbank_list_t *list, nrt_prgbank_t *prg) {
+nrt_prgbank_list* nrt_prgbank_list_append(nrt_prgbank_list *list, nrt_prgbank *prg) {
   int last_index = nrt_prgbank_list_count(list);
 
   return nrt_prgbank_list_insert(list, prg, last_index);
 }
 
-nrt_prgbank_list_t* nrt_prgbank_list_insert(nrt_prgbank_list_t *list, nrt_prgbank_t *prg, int index) {
+nrt_prgbank_list* nrt_prgbank_list_insert(nrt_prgbank_list *list, nrt_prgbank *prg, int index) {
   // initialize our new listitem.
-  nrt_prgbank_list_t *new_list = nrt_prgbank_list_create(prg, NULL);
+  nrt_prgbank_list *new_list = nrt_prgbank_list_create(prg, NULL);
 
   // we're prepending, so this is super-simple
   if ( index == 0 ) {
@@ -28,8 +28,8 @@ nrt_prgbank_list_t* nrt_prgbank_list_insert(nrt_prgbank_list_t *list, nrt_prgban
     return new_list;
   }
 
-  nrt_prgbank_list_t *before = nrt_prgbank_list_at(list, index - 1);
-  nrt_prgbank_list_t *after = before->next;
+  nrt_prgbank_list *before = nrt_prgbank_list_at(list, index - 1);
+  nrt_prgbank_list *after = before->next;
 
   before->next = new_list;
   new_list->next = after;
@@ -37,8 +37,8 @@ nrt_prgbank_list_t* nrt_prgbank_list_insert(nrt_prgbank_list_t *list, nrt_prgban
   return list;
 }
 
-nrt_prgbank_list_t* nrt_prgbank_list_at(nrt_prgbank_list_t *list, int index) {
-  nrt_prgbank_list_t *l = list;
+nrt_prgbank_list* nrt_prgbank_list_at(nrt_prgbank_list *list, int index) {
+  nrt_prgbank_list *l = list;
   int counter = 0;
 
   while (l) {
@@ -53,8 +53,8 @@ nrt_prgbank_list_t* nrt_prgbank_list_at(nrt_prgbank_list_t *list, int index) {
   return NULL;
 }
 
-nrt_prgbank_list_t* nrt_prgbank_list_last(nrt_prgbank_list_t *list) {
-  nrt_prgbank_list_t *l;
+nrt_prgbank_list* nrt_prgbank_list_last(nrt_prgbank_list *list) {
+  nrt_prgbank_list *l;
 
   while (l) {
     if (!l->next) {
@@ -67,8 +67,8 @@ nrt_prgbank_list_t* nrt_prgbank_list_last(nrt_prgbank_list_t *list) {
   return NULL;
 }
 
-int nrt_prgbank_list_count(nrt_prgbank_list_t *list) {
-  nrt_prgbank_list_t *l = list;
+int nrt_prgbank_list_count(nrt_prgbank_list *list) {
+  nrt_prgbank_list *l = list;
   int counter = 0;
 
   while (l != NULL) {
@@ -81,9 +81,9 @@ int nrt_prgbank_list_count(nrt_prgbank_list_t *list) {
 }
 
 // free the whole list and the associated PRG
-void nrt_prgbank_list_free(nrt_prgbank_list_t *list) {
-  nrt_prgbank_list_t *l = list;
-  nrt_prgbank_list_t *next = l->next;
+void nrt_prgbank_list_free(nrt_prgbank_list *list) {
+  nrt_prgbank_list *l = list;
+  nrt_prgbank_list *next = l->next;
 
   while (l) {
     if (l->prg) {

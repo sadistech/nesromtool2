@@ -10,14 +10,14 @@
 #define NRT_PRG_BANK_SIZE 16384
 #define NRT_PRG_BANK_MAX_COUNT 64
 
-#define NRT_PRG_ALLOC (nrt_prgbank_t*)malloc(sizeof(nrt_prgbank_t))
+#define NRT_PRG_ALLOC (nrt_prgbank*)malloc(sizeof(nrt_prgbank))
 
-typedef struct nrt_prgbank_t {
+typedef struct nrt_prgbank {
   unsigned char data[NRT_PRG_BANK_SIZE];
-} nrt_prgbank_t;
+} nrt_prgbank;
 
 int nrt_prg_offset(int prg_index);
-bool nrt_prg_index_valid(nrt_header_t *header, int prg_index);
-int nrt_extract_prg(FILE *rom, int index, nrt_prgbank_t *prg);
+bool nrt_prg_index_valid(nrt_header *header, int prg_index);
+int nrt_extract_prg(FILE *rom, int index, nrt_prgbank *prg);
 
 #endif
