@@ -18,7 +18,7 @@ typedef struct nrt_prgbank_list {
 
 typedef struct nrt_chrbank_list {
   nrt_chrbank *chr;
-  struct nrg_chrbank_list *next;
+  struct nrt_chrbank_list *next;
 } nrt_chrbank_list;
 
 typedef struct nrt_rom {
@@ -36,5 +36,14 @@ nrt_prgbank_list* nrt_prgbank_list_at(nrt_prgbank_list *list, int index);
 nrt_prgbank_list* nrt_prgbank_list_last(nrt_prgbank_list *list);
 int nrt_prgbank_list_count(nrt_prgbank_list *list);
 void nrt_prgbank_list_free(nrt_prgbank_list *list);
+
+nrt_chrbank_list* nrt_chrbank_list_create(nrt_chrbank *chr, nrt_chrbank_list *next);
+nrt_chrbank_list* nrt_chrbank_list_prepend(nrt_chrbank_list *list, nrt_chrbank *chr);
+nrt_chrbank_list* nrt_chrbank_list_insert(nrt_chrbank_list *list, nrt_chrbank *chr, int index);
+nrt_chrbank_list* nrt_chrbank_list_append(nrt_chrbank_list *list, nrt_chrbank *chr);
+nrt_chrbank_list* nrt_chrbank_list_at(nrt_chrbank_list *list, int index);
+nrt_chrbank_list* nrt_chrbank_list_last(nrt_chrbank_list *list);
+int nrt_chrbank_list_count(nrt_chrbank_list *list);
+void nrt_chrbank_list_free(nrt_chrbank_list *list);
 
 #endif
