@@ -7,6 +7,7 @@
 #include "nrt/prg.h"
 #include "nrt/error.h"
 #include "nrt/header.h"
+#include "nrt/title.h"
 
 #define NRT_PRG_LIST_ALLOC (nrt_prgbank_list*)malloc(sizeof(nrt_prgbank_list))
 #define NRT_CHR_LIST_ALLOC (nrt_chrbank_list*)malloc(sizeof(nrt_chrbank_list))
@@ -25,7 +26,7 @@ typedef struct nrt_rom {
   nrt_header *header;
   nrt_prgbank_list *prg_banks;
   nrt_chrbank_list *chr_banks;
-  char title[256];
+  char title[NRT_TITLE_MAX_LENGTH];
 } nrt_rom;
 
 nrt_prgbank_list* nrt_prgbank_list_create(nrt_prgbank *prg, nrt_prgbank_list *next);
