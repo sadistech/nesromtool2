@@ -18,6 +18,7 @@ typedef struct nrt_header {
   unsigned char the_rest[10];
 } nrt_header;
 
+nrt_header* nrt_header_create(int prg_count, int chr_count);
 int nrt_header_extract(FILE *rom, nrt_header *header);
 bool nrt_validate_header(nrt_header *header);
 bool nrt_validate_header_magic_word(nrt_header* header);

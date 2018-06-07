@@ -1,6 +1,17 @@
 #include "header.h"
 #include "prg.h"
 
+nrt_header* nrt_header_create(int prg_count, int chr_count) {
+  nrt_header* header = NRT_HEADER_ALLOC;
+
+  memcpy(header->magic_word, NRT_MAGIC_WORD, NRT_MAGIC_WORD_SIZE);
+
+  header->prg_count = prg_count;
+  header->chr_count = chr_count;
+
+  return header;
+}
+
 int nrt_header_extract(FILE *rom, nrt_header *header) {
   fseek(rom, 0, SEEK_SET);
 
