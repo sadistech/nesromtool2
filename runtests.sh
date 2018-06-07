@@ -35,7 +35,7 @@ test_total=0
 error_total=0
 failed_tests=()
 
-mapfile -t sourcefiles < <( find src -name '*.c' -not -name 'main.c' )
+mapfile -t sourcefiles < <( find src -name '*.c' -not -name '*_main.c' )
 
 if [[ "$#" -eq 0 ]]; then
   for testsrc in tests/*; do

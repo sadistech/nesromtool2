@@ -17,7 +17,7 @@ $(builtdir):
 	mkdir $(builtdir)
 
 $(builtfile): ./bin $(srcfiles) $(headers)
-	gcc -o $(builtfile) $(srcfiles) $(srcdir)/main.c 
+	gcc -o $(builtfile) $(srcfiles) $(srcdir)/nrt_main.c 
 
 run: $(builtfile) all
 	$(builtfile) verify ./mario3.nes
