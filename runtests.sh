@@ -35,6 +35,9 @@ test_total=0
 error_total=0
 failed_tests=()
 
+export NRT_TEST_DIR="$( realpath tests )"
+export NRT_FIXTURE_DIR="$( realpath tests/fixtures )"
+
 mapfile -t sourcefiles < <( find src -name '*.c' -not -name '*_main.c' )
 
 if [[ "$#" -eq 0 ]]; then
