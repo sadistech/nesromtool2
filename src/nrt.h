@@ -11,6 +11,7 @@
 
 #define NRT_PRG_LIST_ALLOC (nrt_prgbank_list*)malloc(sizeof(nrt_prgbank_list))
 #define NRT_CHR_LIST_ALLOC (nrt_chrbank_list*)malloc(sizeof(nrt_chrbank_list))
+#define NRT_ROM_ALLOC (nrt_rom*)malloc(sizeof(nrt_rom))
 
 typedef struct nrt_prgbank_list {
   nrt_prgbank *prg;
@@ -46,5 +47,9 @@ nrt_chrbank_list* nrt_chrbank_list_at(nrt_chrbank_list *list, int index);
 nrt_chrbank_list* nrt_chrbank_list_last(nrt_chrbank_list *list);
 int nrt_chrbank_list_count(nrt_chrbank_list *list);
 void nrt_chrbank_list_free(nrt_chrbank_list *list);
+
+nrt_rom* nrt_rom_create(void);
+void nrt_rom_free(nrt_rom* rom);
+nrt_rom* nrt_read_rom_from_file(FILE* romfile);
 
 #endif

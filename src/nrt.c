@@ -193,3 +193,71 @@ void nrt_chrbank_list_free(nrt_chrbank_list *list) {
     l = next;
   }
 }
+
+nrt_rom* nrt_rom_create(void) {
+  nrt_rom* rom = NRT_ROM_ALLOC;
+
+  rom->header = NRT_HEADER_ALLOC;
+  rom->prg_banks = NULL;
+  rom->chr_banks = NULL;
+
+  bzero(rom->title, NRT_TITLE_MAX_LENGTH);
+
+  return rom;
+}
+
+void nrt_rom_free(nrt_rom* rom) {
+  free(rom->header);
+  nrt_prgbank_list_free(rom->prg_banks);
+  nrt_chrbank_list_free(rom->chr_banks);
+}
+
+nrt_rom* nrt_read_rom_from_file(FILE* romfile) {
+  nrt_rom* rom = nrt_rom_create();
+
+  fseek(romfile, 0, SEEK_SET);
+
+  if (nrt_header_extract(romfile, rom->header) != 1) {
+    nrt_rom_free(rom);
+    return NULL;
+  }
+
+  int i;
+  for (i = 0; i < rom->header->prg_count; i++) {
+    nrt_prgbank* prg = NRT_PRG_ALLOC;
+
+    if (nrt_extract_prg(romfile, i, prg) != 1) {
+      nrt_rom_free(rom);
+      free(prg);
+      return NULL;
+    }
+
+    if (i == 0) {
+      // we need to start the prg stuff
+      rom->prg_banks = nrt_prgbank_list_create(prg, NULL);
+    } else {
+      nrt_prgbank_list_append(rom->prg_banks, prg);
+    }
+  }
+
+  for (i = 0; i < rom->header->chr_count; i++) {
+    nrt_chrbank* chr = NRT_CHR_ALLOC;
+
+    if (nrt_extract_chr(romfile, rom->header, i, chr) != 1) {
+      nrt_rom_free(rom);
+      free(chr);
+      return NULL;
+    }
+
+    if (i == 0) {
+      // we need to start the chr stuff
+      rom->chr_banks = nrt_chrbank_list_create(chr, NULL);
+    } else {
+      nrt_chrbank_list_append(rom->chr_banks, chr);
+    }
+  }
+
+  nrt_read_title_from_file(romfile, rom->header, rom->title);
+
+  return rom;
+}
