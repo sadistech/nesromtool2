@@ -39,9 +39,10 @@ export NRT_TEST_DIR="$( realpath tests )"
 export NRT_FIXTURE_DIR="$( realpath tests/fixtures )"
 
 mapfile -t sourcefiles < <( find src -name '*.c' -not -name '*_main.c' )
+mapfile -t testfiles < <( find tests -name '*.c' )
 
 if [[ "$#" -eq 0 ]]; then
-  for testsrc in tests/*; do
+  for testsrc in "${testfiles[@]}"; do
     run_test "$testsrc"
   done
 else
