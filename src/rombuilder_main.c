@@ -27,6 +27,11 @@ int main(int argc, char** argv) {
   nrt_header* header = nrt_header_create(prg_count, chr_count);
   nrt_prgbank* prg = NRT_PRG_ALLOC;
   nrt_chrbank* chr = NRT_CHR_ALLOC;
+  char title[NRT_TITLE_MAX_LENGTH];
+
+  if (in_title) {
+    strcpy(title, in_title);
+  }
 
   bzero(prg->data, NRT_PRG_BANK_SIZE);
   bzero(chr->tile, NRT_CHR_BANK_SIZE);
@@ -70,4 +75,17 @@ int main(int argc, char** argv) {
     }
 
   }
+
+  // write the title
+  if (in_title) {
+    if (fwrite(title, NRT_TITLE_MAX_LENGTH, 1, rom) != 1) {
+      printf("Failed to write title.\n");
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  fclose(rom);
+
+  printf("Done!\n");
+  exit(EXIT_SUCCESS);
 }
