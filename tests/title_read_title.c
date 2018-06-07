@@ -13,6 +13,8 @@ int main() {
 
   rom = fopen(rom_path, "r");
 
+  assert(rom);
+
   nrt_header* header = NRT_HEADER_ALLOC;
   nrt_header_extract(rom, header);
 
