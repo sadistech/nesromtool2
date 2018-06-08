@@ -47,6 +47,7 @@ nrt_prg_listitem* nrt_prg_listitem_create(nrt_prgbank *prg, nrt_prg_listitem *ne
 nrt_prg_list* nrt_prg_list_prepend(nrt_prg_list* list, nrt_prgbank* prg);
 nrt_prg_list* nrt_prg_list_insert(nrt_prg_list* list, nrt_prgbank* prg, int index);
 nrt_prg_list* nrt_prg_list_append(nrt_prg_list* list, nrt_prgbank* prg);
+nrt_prg_listitem* nrt_prg_list_delete(nrt_prg_list* list, int index);
 nrt_prg_listitem* nrt_prg_listitem_at(nrt_prg_list* list, int index);
 nrt_prg_listitem* nrt_prg_listitem_last(nrt_prg_list* list);
 int nrt_prg_listitem_count(nrt_prg_listitem* list);
