@@ -2,15 +2,30 @@
 #include "nrt.h"
 
 int main() {
-  nrt_prgbank_list *c = nrt_prgbank_list_create(NULL, NULL);
-  nrt_prgbank_list *b = nrt_prgbank_list_create(NULL, c);
-  nrt_prgbank_list *a = nrt_prgbank_list_create(NULL, b);
-  nrt_prgbank_list *head = nrt_prgbank_list_create(NULL, a);
+  nrt_prg_list* list = nrt_prg_list_create();
 
-  assert( nrt_prgbank_list_at(head, 0) == head );
-  assert( nrt_prgbank_list_at(head, 1) == a );
-  assert( nrt_prgbank_list_at(head, 2) == b );
-  assert( nrt_prgbank_list_at(head, 3) == c );
-  assert( nrt_prgbank_list_at(head, 4) == NULL );
+  assert(list->count == 0);
+  assert(list->list == NULL);
+
+  nrt_prgbank* a = NRT_PRG_ALLOC;
+  nrt_prgbank* b = NRT_PRG_ALLOC;
+  nrt_prgbank* c = NRT_PRG_ALLOC;
+
+  nrt_prg_listitem* item;
+
+  nrt_prg_list_append(list, a);
+  nrt_prg_list_append(list, b);
+  nrt_prg_list_append(list, c);
+
+  item = nrt_prg_listitem_at(list, 0);
+  assert( item->prg == a );
+  item = nrt_prg_listitem_at(list, 1);
+  assert( item->prg == b );
+  item = nrt_prg_listitem_at(list, 2);
+  assert( item->prg == c );
+  item = nrt_prg_listitem_at(list, 3);
+  assert( item == NULL );
+
+  nrt_prg_list_free(list);
 }
 

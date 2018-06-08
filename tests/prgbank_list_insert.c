@@ -1,20 +1,27 @@
 #include <assert.h>
 #include "nrt.h"
 
-int main() {
-  nrt_prgbank_list *c = nrt_prgbank_list_create(NULL, NULL);
-  nrt_prgbank_list *a = nrt_prgbank_list_create(NULL, c);
-  nrt_prgbank_list *head = nrt_prgbank_list_create(NULL, a);
+int main()
+{
+  nrt_prg_list* list = nrt_prg_list_create();
 
-  nrt_prgbank *b = NRT_PRG_ALLOC;
+  assert(list->count == 0);
+  assert(list->list == NULL);
 
-  assert( nrt_prgbank_list_count(head) == 3 );
+  nrt_prgbank* a = NRT_PRG_ALLOC;
+  nrt_prgbank* b = NRT_PRG_ALLOC;
+  nrt_prgbank* c = NRT_PRG_ALLOC;
 
-  head = nrt_prgbank_list_insert(head, b, 2);
+  // first we prepend an item.
+  nrt_prg_list_insert(list, a, 0);
+  assert( list->list->prg == a );
 
-  assert( nrt_prgbank_list_count(head) == 4 );
+  // then another
+  nrt_prg_list_insert(list, c, 1);
+  assert( list->list->next->prg == c );
 
-  assert( head->next == a );
-  assert( a->next->prg == b );
-  assert( a->next->next == c );
+  nrt_prg_list_insert(list, b, 1);
+  assert( list->list->next->prg == b );
+
+  nrt_prg_list_free(list);
 }
