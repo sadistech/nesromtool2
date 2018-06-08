@@ -52,19 +52,20 @@ nrt_prg_listitem* nrt_prg_listitem_last(nrt_prg_list* list);
 int nrt_prg_listitem_count(nrt_prg_listitem* list);
 void nrt_prg_list_free(nrt_prg_list* list);
 
-/*
+nrt_chr_list* nrt_chr_list_create(void);
 nrt_chr_listitem* nrt_chr_listitem_create(nrt_chrbank *chr, nrt_chr_listitem *next);
-nrt_chr_listitem* nrt_chr_listitem_prepend(nrt_chr_listitem *list, nrt_chrbank *chr);
-nrt_chr_listitem* nrt_chr_listitem_insert(nrt_chr_listitem *list, nrt_chrbank *chr, int index);
-nrt_chr_listitem* nrt_chr_listitem_append(nrt_chr_listitem *list, nrt_chrbank *chr);
-nrt_chr_listitem* nrt_chr_listitem_at(nrt_chr_listitem *list, int index);
-nrt_chr_listitem* nrt_chr_listitem_last(nrt_chr_listitem *list);
-int nrt_chr_listitem_count(nrt_chr_listitem *list);
-void nrt_chr_listitem_free(nrt_chr_listitem *list);
+
+nrt_chr_list* nrt_chr_list_prepend(nrt_chr_list* list, nrt_chrbank* chr);
+nrt_chr_list* nrt_chr_list_insert(nrt_chr_list* list, nrt_chrbank* chr, int index);
+nrt_chr_list* nrt_chr_list_append(nrt_chr_list* list, nrt_chrbank* chr);
+nrt_chr_listitem* nrt_chr_listitem_at(nrt_chr_list* list, int index);
+nrt_chr_listitem* nrt_chr_listitem_last(nrt_chr_list* list);
+int nrt_chr_listitem_count(nrt_chr_listitem* list);
+void nrt_chr_list_free(nrt_chr_list* list);
+
 
 nrt_rom* nrt_rom_create(void);
 void nrt_rom_free(nrt_rom* rom);
 nrt_rom* nrt_read_rom_from_file(FILE* romfile);
 
-*/
 #endif

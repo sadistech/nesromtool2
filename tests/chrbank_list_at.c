@@ -2,15 +2,30 @@
 #include "nrt.h"
 
 int main() {
-  nrt_chrbank_list *c = nrt_chrbank_list_create(NULL, NULL);
-  nrt_chrbank_list *b = nrt_chrbank_list_create(NULL, c);
-  nrt_chrbank_list *a = nrt_chrbank_list_create(NULL, b);
-  nrt_chrbank_list *head = nrt_chrbank_list_create(NULL, a);
+  nrt_chr_list* list = nrt_chr_list_create();
 
-  assert( nrt_chrbank_list_at(head, 0) == head );
-  assert( nrt_chrbank_list_at(head, 1) == a );
-  assert( nrt_chrbank_list_at(head, 2) == b );
-  assert( nrt_chrbank_list_at(head, 3) == c );
-  assert( nrt_chrbank_list_at(head, 4) == NULL );
+  assert(list->count == 0);
+  assert(list->list == NULL);
+
+  nrt_chrbank* a = NRT_CHR_ALLOC;
+  nrt_chrbank* b = NRT_CHR_ALLOC;
+  nrt_chrbank* c = NRT_CHR_ALLOC;
+
+  nrt_chr_listitem* item;
+
+  nrt_chr_list_append(list, a);
+  nrt_chr_list_append(list, b);
+  nrt_chr_list_append(list, c);
+
+  item = nrt_chr_listitem_at(list, 0);
+  assert( item->chr == a );
+  item = nrt_chr_listitem_at(list, 1);
+  assert( item->chr == b );
+  item = nrt_chr_listitem_at(list, 2);
+  assert( item->chr == c );
+  item = nrt_chr_listitem_at(list, 3);
+  assert( item == NULL );
+
+  nrt_chr_list_free(list);
 }
 

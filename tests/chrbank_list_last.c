@@ -1,12 +1,30 @@
 #include <assert.h>
 #include "nrt.h"
 
-int main() {
-  nrt_chrbank_list *c = nrt_chrbank_list_create(NULL, NULL);
-  nrt_chrbank_list *b = nrt_chrbank_list_create(NULL, c);
-  nrt_chrbank_list *a = nrt_chrbank_list_create(NULL, b);
-  nrt_chrbank_list *head = nrt_chrbank_list_create(NULL, a);
+int main()
+{
+  nrt_chr_list* list = nrt_chr_list_create();
 
-  assert( nrt_chrbank_list_last(head) == c );
+  nrt_chrbank* a = NRT_CHR_ALLOC;
+  nrt_chrbank* b = NRT_CHR_ALLOC;
+  nrt_chrbank* c = NRT_CHR_ALLOC;
+
+  assert( nrt_chr_listitem_last(list) == NULL );
+
+  nrt_chr_listitem* last;
+
+  nrt_chr_list_append(list, a);
+  last = nrt_chr_listitem_last(list);
+  assert( last->chr == a );
+
+  nrt_chr_list_append(list, b);
+  last = nrt_chr_listitem_last(list);
+  assert( last->chr == b );
+
+  nrt_chr_list_append(list, c);
+  last = nrt_chr_listitem_last(list);
+  assert( last->chr == c );
+
+  nrt_chr_list_free(list);
 }
 

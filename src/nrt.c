@@ -115,46 +115,61 @@ void nrt_prg_list_free(nrt_prg_list *list) {
   free(list);
 }
 
-/*
-nrt_chr_listitem* nrt_chr_listitem_create(nrt_chrbank *chr, nrt_chr_listitem *next) {
-  nrt_chr_listitem *list = NRT_CHR_LIST_ALLOC;
+
+nrt_chr_list* nrt_chr_list_create(void)
+{
+  nrt_chr_list* list = (nrt_chr_list*)malloc(sizeof(nrt_chr_list));
+  list->count = 0;
+  list->list = NULL;
+
+  return list;
+}
+
+nrt_chr_listitem* nrt_chr_listitem_create(nrt_chrbank* chr, nrt_chr_listitem* next)
+{
+  nrt_chr_listitem *list = NRT_CHR_LISTITEM_ALLOC;
   list->chr = chr;
   list->next = next;
 
   return list;
 }
 
-nrt_chr_listitem* nrt_chr_listitem_prepend(nrt_chr_listitem *list, nrt_chrbank *chr) {
-  return nrt_chr_listitem_insert(list, chr, 0);
+nrt_chr_list* nrt_chr_list_prepend(nrt_chr_list* list, nrt_chrbank* chr)
+{
+  return nrt_chr_list_insert(list, chr, 0);
 }
 
-nrt_chr_listitem* nrt_chr_listitem_append(nrt_chr_listitem *list, nrt_chrbank *chr) {
-  int last_index = nrt_chr_listitem_count(list);
-
-  return nrt_chr_listitem_insert(list, chr, last_index);
+nrt_chr_list* nrt_chr_list_append(nrt_chr_list* list, nrt_chrbank *chr)
+{
+  return nrt_chr_list_insert(list, chr, list->count);
 }
 
-nrt_chr_listitem* nrt_chr_listitem_insert(nrt_chr_listitem *list, nrt_chrbank *chr, int index) {
+nrt_chr_list* nrt_chr_list_insert(nrt_chr_list* list, nrt_chrbank* chr, int index)
+{
   // initialize our new listitem.
-  nrt_chr_listitem *new_list = nrt_chr_listitem_create(chr, NULL);
+  nrt_chr_listitem *new_item = nrt_chr_listitem_create(chr, NULL);
+
+  list->count++;
 
   // we're prepending, so this is super-simple
   if ( index == 0 ) {
-    new_list->next = list;
-    return new_list;
+    new_item->next = list->list;
+    list->list = new_item;
+    return list;
   }
 
   nrt_chr_listitem *before = nrt_chr_listitem_at(list, index - 1);
   nrt_chr_listitem *after = before->next;
 
-  before->next = new_list;
-  new_list->next = after;
+  before->next = new_item;
+  new_item->next = after;
 
   return list;
 }
 
-nrt_chr_listitem* nrt_chr_listitem_at(nrt_chr_listitem *list, int index) {
-  nrt_chr_listitem *l = list;
+nrt_chr_listitem* nrt_chr_listitem_at(nrt_chr_list* list, int index)
+{
+  nrt_chr_listitem *l = list->list;
   int counter = 0;
 
   while (l) {
@@ -169,8 +184,9 @@ nrt_chr_listitem* nrt_chr_listitem_at(nrt_chr_listitem *list, int index) {
   return NULL;
 }
 
-nrt_chr_listitem* nrt_chr_listitem_last(nrt_chr_listitem *list) {
-  nrt_chr_listitem *l;
+nrt_chr_listitem* nrt_chr_listitem_last(nrt_chr_list* list)
+{
+  nrt_chr_listitem *l = list->list;
 
   while (l) {
     if (!l->next) {
@@ -197,8 +213,8 @@ int nrt_chr_listitem_count(nrt_chr_listitem *list) {
 }
 
 // free the whole list and the associated CHR
-void nrt_chr_listitem_free(nrt_chr_listitem *list) {
-  nrt_chr_listitem *l = list;
+void nrt_chr_list_free(nrt_chr_list *list) {
+  nrt_chr_listitem *l = list->list;
   nrt_chr_listitem *next = l->next;
 
   while (l) {
@@ -211,14 +227,16 @@ void nrt_chr_listitem_free(nrt_chr_listitem *list) {
 
     l = next;
   }
+
+  free(list);
 }
 
 nrt_rom* nrt_rom_create(void) {
   nrt_rom* rom = NRT_ROM_ALLOC;
 
   rom->header = NRT_HEADER_ALLOC;
-  rom->prg_banks = NULL;
-  rom->chr_banks = NULL;
+  rom->prgs = nrt_prg_list_create();
+  rom->chrs = nrt_chr_list_create();
 
   bzero(rom->title, NRT_TITLE_MAX_LENGTH);
 
@@ -227,8 +245,8 @@ nrt_rom* nrt_rom_create(void) {
 
 void nrt_rom_free(nrt_rom* rom) {
   free(rom->header);
-  nrt_prg_listitem_free(rom->prg_banks);
-  nrt_chr_listitem_free(rom->chr_banks);
+  nrt_prg_list_free(rom->prgs);
+  nrt_chr_list_free(rom->chrs);
 }
 
 nrt_rom* nrt_read_rom_from_file(FILE* romfile) {
@@ -251,12 +269,7 @@ nrt_rom* nrt_read_rom_from_file(FILE* romfile) {
       return NULL;
     }
 
-    if (i == 0) {
-      // we need to start the prg stuff
-      rom->prg_banks = nrt_prg_listitem_create(prg, NULL);
-    } else {
-      nrt_prg_listitem_append(rom->prg_banks, prg);
-    }
+    nrt_prg_list_append(rom->prgs, prg);
   }
 
   for (i = 0; i < rom->header->chr_count; i++) {
@@ -268,15 +281,10 @@ nrt_rom* nrt_read_rom_from_file(FILE* romfile) {
       return NULL;
     }
 
-    if (i == 0) {
-      // we need to start the chr stuff
-      rom->chr_banks = nrt_chr_listitem_create(chr, NULL);
-    } else {
-      nrt_chr_listitem_append(rom->chr_banks, chr);
-    }
+    nrt_chr_list_append(rom->chrs, chr);
   }
 
   nrt_read_title_from_file(romfile, rom->header, rom->title);
 
   return rom;
-}*/
+}

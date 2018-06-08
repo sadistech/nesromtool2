@@ -21,12 +21,15 @@ int main() {
   assert( rom->header->prg_count == 1 );
   assert( rom->header->chr_count == 2 );
 
-  assert( nrt_prgbank_list_count(rom->prg_banks) == 1 );
-  assert( nrt_chrbank_list_count(rom->chr_banks) == 2 );
+  assert( rom->prgs->count == 1 );
+  assert( rom->chrs->count == 2 );
 
-  assert( strcmp((char*)rom->prg_banks->prg, "PRG 00") == 0 );
-  assert( strcmp((char*)rom->chr_banks->chr, "CHR 00") == 0 );
-  assert( strcmp((char*)rom->chr_banks->next->chr, "CHR 01") == 0 );
+  assert( strcmp((char*)rom->prgs->list->prg, "PRG 00") == 0 );
+  assert( strcmp((char*)rom->chrs->list->chr, "CHR 00") == 0 );
+  assert( strcmp((char*)rom->chrs->list->next->chr, "CHR 01") == 0 );
 
   assert( strcmp(rom->title, "TITLE") == 0 );
+
+  fclose(romfile);
+  nrt_rom_free(rom);
 }

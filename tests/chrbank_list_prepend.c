@@ -1,12 +1,25 @@
 #include <assert.h>
 #include "nrt.h"
 
-int main() {
-  nrt_chrbank_list *head = nrt_chrbank_list_create(NULL, NULL);
+int main()
+{
+  nrt_chr_list* list = nrt_chr_list_create();
 
-  nrt_chrbank *a = NRT_CHR_ALLOC;
+  assert(list->count == 0);
+  assert(list->list == NULL);
 
-  nrt_chrbank_list *new_head = nrt_chrbank_list_prepend(head, a);
+  nrt_chrbank* a = NRT_CHR_ALLOC;
+  nrt_chrbank* b = NRT_CHR_ALLOC;
 
-  assert(new_head->chr == a);
+  // first we prepend an item.
+  nrt_chr_list_prepend(list, a);
+
+  assert(list->list->chr == a);
+
+  // then another
+  nrt_chr_list_prepend(list, b);
+
+  assert(list->list->chr == b);
+
+  nrt_chr_list_free(list);
 }
