@@ -28,6 +28,32 @@ nrt_prg_list* nrt_prg_list_append(nrt_prg_list* list, nrt_prgbank *prg)
   return nrt_prg_list_insert(list, prg, list->count);
 }
 
+nrt_prg_listitem* nrt_prg_list_delete(nrt_prg_list* list, int index)
+{
+  // first get the item in question
+  nrt_prg_listitem* item = nrt_prg_listitem_at(list, index);
+
+  // if we didn't get anything, just return null and don't do anything.
+  if (!item) {
+    return NULL;
+  }
+
+  // next, if index is zero, we need to basically just shift everyting over and we're done.
+  if (index == 0) {
+    list->count--;
+    list->list = item->next;
+    return item;
+  }
+
+  // otherwise, we need to surgically remove the item.
+  // get the previous item, set previous->next to item->next
+  list->count--;
+  nrt_prg_listitem* prev = nrt_prg_listitem_at(list, index - 1);
+  prev->next = item->next;
+
+  return item;
+}
+
 nrt_prg_list* nrt_prg_list_insert(nrt_prg_list* list, nrt_prgbank* prg, int index)
 {
   // initialize our new listitem.
@@ -144,10 +170,10 @@ nrt_chr_list* nrt_chr_list_append(nrt_chr_list* list, nrt_chrbank *chr)
   return nrt_chr_list_insert(list, chr, list->count);
 }
 
-nrt_prg_listitem* nrt_prg_list_delete(nrt_prg_list* list, int index)
+nrt_chr_listitem* nrt_chr_list_delete(nrt_chr_list* list, int index)
 {
   // first get the item in question
-  nrt_prg_listitem* item = nrt_prg_listitem_at(list, index);
+  nrt_chr_listitem* item = nrt_chr_listitem_at(list, index);
 
   // if we didn't get anything, just return null and don't do anything.
   if (!item) {
@@ -164,7 +190,7 @@ nrt_prg_listitem* nrt_prg_list_delete(nrt_prg_list* list, int index)
   // otherwise, we need to surgically remove the item.
   // get the previous item, set previous->next to item->next
   list->count--;
-  nrt_prg_listitem* prev = nrt_prg_listitem_at(list, index - 1);
+  nrt_chr_listitem* prev = nrt_chr_listitem_at(list, index - 1);
   prev->next = item->next;
 
   return item;
