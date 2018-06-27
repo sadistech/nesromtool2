@@ -72,8 +72,6 @@ int main() {
         idx = 1;
         //second byte
       }
-      printf("Writing pixel:%d\n", i * 8 + j);
-      fflush(stdout);
       row[idx] = row[idx] << 2;
       row[idx] += bitmap->pixels[i * 8 + j];
     }
