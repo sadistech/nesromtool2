@@ -18,9 +18,16 @@ int main() {
 
   fclose(infile);
 
-  nrt_tile *tile = &chr->tile[1];
-  nrt_tile_bitmap *bitmap = NRT_TILE_BITMAP_ALLOC;
-  nrt_tile_to_bitmap(tile, bitmap);
+  nrt_tile_bitmap tiles[NRT_CHR_TILE_COUNT];
+
+  int i;
+  int j;
+  for (i = 0; i < NRT_CHR_TILE_COUNT; i++) {
+    nrt_tile_to_bitmap(&chr->tile[i], &tiles[i]);
+  }
+
+  free(chr);
+  free(header);
 
   outfile = fopen("sprite.png", "wb");
 
@@ -46,37 +53,45 @@ int main() {
     {0x00, 0x00, 0xFF}
   };
 
-  png_byte *row = (png_byte*)malloc(2 * sizeof(png_byte));
+  // 16w x 32h tiles
+  png_byte *row = (png_byte*)malloc(16 * 2 * sizeof(png_byte));
 
   png_init_io(png_ptr, outfile);
 //png_set_write_status_fn(png_ptr, write_row_callback);
 
-  png_set_IHDR(png_ptr, info_ptr, 8, 8, 2, PNG_COLOR_TYPE_PALETTE, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+  png_set_IHDR(png_ptr, info_ptr, 16 * 8, 32 * 8, 2, PNG_COLOR_TYPE_PALETTE, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
   png_set_PLTE(png_ptr, info_ptr, palette, 4);
 
   png_write_info(png_ptr, info_ptr);
 
-  int i;
-  int j;
+  int tile_row = 0;
+  int tile_idx = 0;
   int idx = 0;
-  for (i = 0; i < 8; i++) {
-    // now that we're on the row, we have to write the binary index color to the row
-    row[0] = 0;
-    row[1] = 0;
 
-    for (j = 0; j < 8; j++) {
-      if (j <= 3) {
-        idx = 0;
-        // first byte
-      } else {
-        idx = 1;
-        //second byte
+  // iterate over each row of tiles
+  for (tile_row = 0; tile_row < 32; tile_row++) {
+    // iterate over each tile in the row
+    for (tile_idx = 0; tile_idx < 16; tile_idx++) {
+      // iterate over each pixel in the row
+      for (i = 0; i < 8; i++) {
+        bzero(row, 16 * 2 * sizeof(row));
+
+        //iterate over each row of pixels in the tile
+        for(j = 0; j < 8; j++) {
+          idx = 0;
+          if (j >3) {
+            idx = 1;
+          }
+
+          idx += (tile_idx * 2);
+          row[idx] = row[idx] << 2;
+          row[idx] += tiles[tile_row * 8 + tile_idx].pixels[i * 8 + j];
+        }
+
+        png_write_row(png_ptr, row);
+        printf("Wrote row tile(%d) pixel(%d)\n", tile_row, i);
       }
-      row[idx] = row[idx] << 2;
-      row[idx] += bitmap->pixels[i * 8 + j];
     }
-
-    png_write_row(png_ptr, row);
   }
 
   png_write_end(png_ptr, NULL);
