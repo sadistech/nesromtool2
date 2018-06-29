@@ -5,7 +5,7 @@ int nrt_prg_offset(int prg_index) {
 }
 
 bool nrt_prg_index_valid(nrt_header *header, int prg_index) {
-  return (prg_index >= 0 && header->prg_count < prg_index + 1);
+  return (prg_index >= 0 && (header->prg_count - 1) >= prg_index);
 }
 
 int nrt_extract_prg(FILE *rom, int index, nrt_prgbank *prg) {
