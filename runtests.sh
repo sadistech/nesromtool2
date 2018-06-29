@@ -10,7 +10,7 @@ run_test() {
   test_total=$(( test_total + 1 ))
   local testname="$( basename "$testsrc" '.c' )"
 
-  if ! gcc -Isrc -o "$tempfile" "${sourcefiles[@]}" "$testsrc"; then
+  if ! gcc -Isrc -o "$tempfile" "${sourcefiles[@]}" "$testsrc" -lpng; then
     printf "[ FAIL ] %s\n" "$testname"
     error_total=$(( error_total + 1 ))
     failed_tests+=("$testname")

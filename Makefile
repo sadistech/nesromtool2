@@ -19,10 +19,10 @@ $(builtdir):
 	mkdir $(builtdir)
 
 $(nrtbuilt): ./bin $(srcfiles) $(headers) $(srcdir)/nrt_main.c
-	gcc -o $(nrtbuilt) $(srcfiles) $(srcdir)/nrt_main.c 
+	gcc -o $(nrtbuilt) $(srcfiles) $(srcdir)/nrt_main.c  -lpng
 
 $(rombuilder): ./bin $(srcfiles) $(headers) $(srcdir)/rombuilder_main.c
-	gcc -o $(rombuilder) $(srcfiles) $(srcdir)/rombuilder_main.c
+	gcc -o $(rombuilder) $(srcfiles) $(srcdir)/rombuilder_main.c -lpng
 
 bitmaptest: ./bin $(srcfiles) $(headers) $(srcdir)/bitmap.c
 	gcc -g -o bin/bitmap $(srcfiles) $(srcdir)/bitmap.c -lpng
