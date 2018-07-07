@@ -108,6 +108,97 @@ bool nrt_tiles_to_png(nrt_tile_bitmap *tiles, int count, int width, FILE *outfil
   return true;
 }
 
+bool nrt_png_to_tiles(FILE *png_file, nrt_tile_bitmap *tiles) {
+  char header[NRT_PNG_SIG_SIZE];
+
+  fseek(png_file, 0, SEEK_SET);
+  fread(header, 1, NRT_PNG_SIG_SIZE, png_file);
+
+  if (png_sig_cmp((png_const_bytep)header, 0, 8)) {
+    fprintf(stderr, "this is not a png!\n");
+    return false;
+  }
+
+  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+
+  if (!png_ptr) {
+    fprintf(stderr, "Failed to allocate png_ptr\n");
+    return false;
+  }
+
+  png_infop info_ptr = png_create_info_struct(png_ptr);
+
+  if (!info_ptr) {
+    png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
+    return false;
+  }
+
+  png_infop end_info = png_create_info_struct(png_ptr);
+  if (!end_info) {
+    png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
+    return false;
+  }
+
+  if (setjmp(png_jmpbuf(png_ptr))) {
+    png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+    return false;
+  }
+
+  png_init_io(png_ptr, png_file);
+  png_set_sig_bytes(png_ptr, NRT_PNG_SIG_SIZE);
+  png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_PACKING, NULL);
+
+  //png_read_info(png_ptr, info_ptr);
+  int width = png_get_image_width(png_ptr, info_ptr);
+  int height = png_get_image_height(png_ptr, info_ptr);
+  int bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+  int color_type = png_get_color_type(png_ptr, info_ptr);
+
+  if ( color_type != PNG_COLOR_TYPE_PALETTE ) {
+    png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+    return false;
+  }
+
+  int tiles_width = width / NRT_TILE_WIDTH_PX;
+  int tiles_height = height / NRT_TILE_HEIGHT_PX;
+  int tiles_count = tiles_width * tiles_height;
+
+  /* png_bytep row = (png_bytep)malloc(tiles_width * NRT_TILE_WIDTH_PX * bit_depth / CHAR_BIT * sizeof(png_byte)); */
+  png_bytepp row_pointers = png_get_rows(png_ptr, info_ptr);
+  png_bytep row;
+
+  nrt_tile_bitmap *current_tile = NULL;
+
+  // iterate over each row of tiles
+  // each row of pixels
+  // each tile in the row
+  // each pixel in the tile
+  int tile_row; // which row of tiles we're on
+  int px_row;   // which row of pixels we're on for the row of tiles
+  int tile;     // which column of tiles we're on
+  int tile_px;  // which pixel we're on in the row of pixels
+
+  png_byte px; // our scratch pad for the value of the current pixel
+
+  for (tile_row = 0; tile_row < tiles_height; tile_row++) {
+    for (px_row = 0; px_row < NRT_TILE_HEIGHT_PX; px_row++) {
+      row = row_pointers[tile_row * NRT_TILE_HEIGHT_PX + px_row];
+
+      for (tile = 0; tile < tiles_width; tile++) {
+        for (tile_px = 0; tile_px < NRT_TILE_WIDTH_PX; tile_px++) {
+          // get the current byte from the png row
+          px = row[tile * NRT_TILE_WIDTH_PX + tile_px];
+
+          current_tile = &tiles[tile_row * tiles_width + tile];
+          current_tile->pixels[px_row * NRT_TILE_WIDTH_PX + tile_px] = (char)px;
+        }
+      }
+    }
+  }
+
+  return true;
+}
+
 int nrt_get_tile_pixel(unsigned int row, unsigned int col, nrt_tile *tile) {
   return nrt_tile_bits_to_pixel(
       NRT_GET_BIT(col, tile->chan_a[row]),
@@ -121,3 +212,4 @@ int nrt_tile_bits_to_pixel(int a, int b) {
 
   return a_val + b_val;
 }
+
