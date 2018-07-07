@@ -20,5 +20,6 @@ typedef struct nrt_chrbank {
 int nrt_chr_offset(nrt_header *header, int chr_index);
 bool nrt_chr_index_valid(nrt_header *header, int chr_index);
 int nrt_extract_chr(FILE *rom, nrt_header *header, int index, nrt_chrbank *chr);
+int nrt_replace_chr(FILE *rom, nrt_header *header, int index, nrt_chrbank *chr);
 
 #endif

@@ -15,6 +15,13 @@ int nrt_extract_chr(FILE *rom, nrt_header *header, int index, nrt_chrbank *chr) 
 
   fseek(rom, offset, SEEK_SET);
 
-  return fread(chr, sizeof(nrt_chrbank), 1, rom);
+  return fread(chr, NRT_CHR_BANK_SIZE, 1, rom);
 }
 
+int nrt_replace_chr(FILE *rom, nrt_header *header, int index, nrt_chrbank *chr) {
+  int offset = nrt_chr_offset(header, index);
+
+  fseek(rom, offset, SEEK_SET);
+
+  return fwrite(chr, NRT_CHR_BANK_SIZE, 1, rom);
+}
