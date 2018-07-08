@@ -5,8 +5,10 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <libgen.h>
+#include <getopt.h>
 
 #include "nrt.h"
+#include "subcommands.h"
 
 // verify <path>
 void action_verify(char **argv) {
@@ -103,18 +105,62 @@ void action_extract(char **argv) {
   fclose(outfile);
 }
 
+void action_export(char **argv) {
+  char *text_index = *(argv++);
+  char *rompath = *(argv++);
+  char *outpath = *(argv++);
+
+  int index = atoi(text_index);
+
+  FILE *rom = NULL;
+  FILE *outfile = NULL;
+
+  rom = fopen(rompath, "r");
+
+  nrt_chrbank *chr = NRT_CHR_ALLOC;
+  nrt_header *header = NRT_HEADER_ALLOC;
+
+  nrt_header_extract(rom, header);
+  nrt_extract_chr(rom, header, 0, chr);
+
+  fclose(rom);
+
+  printf("Converting to bitmap...\n");
+  // convert tiles to bitmap
+  // write to our outfile.
+  nrt_tile_bitmap *bitmaps = (nrt_tile_bitmap*)malloc(NRT_CHR_TILE_COUNT * sizeof(nrt_tile_bitmap));
+  int i;
+  for (i = 0; i < NRT_CHR_TILE_COUNT; i++) {
+    nrt_tile_to_bitmap(&chr->tile[i], &bitmaps[i]);
+    printf(".");
+  }
+
+  printf("\n");
+
+  // now write to a file.
+  outfile = fopen(outpath, "w");
+
+  nrt_tiles_to_png(bitmaps, NRT_CHR_TILE_COUNT, 16, outfile);
+
+  fclose(outfile);
+}
+
+
 int main(int argc, char **argv, char **env) {
   char *appname = *(argv++);
-  char *action = *(argv++);
+  char *subcommand= *(argv++);
 
-  if (strcmp(action, "verify") == 0) {
-    action_verify(argv);
-  } else if ( strcmp(action, "extract") == 0 ) {
-    action_extract(argv);
+  if (strcmp(subcommand, "") == 0 ) {
+    fprintf(stderr, "Please supply a subcommand.\n");
+    exit(EXIT_FAILURE);
+  } else if (strcmp(subcommand, "chr") == 0) {
+    subcommand_chr(argc - 1, argv);
   } else {
-    perror("No action.");
+    fprintf(stderr, "Unknown subcommand: %s\n", subcommand);
     exit(EXIT_FAILURE);
   }
+
+  exit(EXIT_SUCCESS);
 
   return 0;
 }
