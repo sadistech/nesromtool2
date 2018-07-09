@@ -340,3 +340,31 @@ nrt_rom* nrt_read_rom_from_file(FILE* romfile) {
 
   return rom;
 }
+
+bool nrt_rom_write_to_file(nrt_rom *rom, FILE *outfile) {
+  int i;
+
+  rom->header->prg_count = nrt_prg_listitem_count(rom->prgs->list);
+  rom->header->chr_count = nrt_chr_listitem_count(rom->chrs->list);
+
+  fwrite(rom->header, NRT_HEADER_SIZE, 1, outfile);
+
+  nrt_prg_listitem *prg_listitem = rom->prgs->list;
+  while (prg_listitem) {
+    fwrite(prg_listitem->prg, NRT_PRG_BANK_SIZE, 1, outfile);
+    prg_listitem = prg_listitem->next;
+  }
+
+  nrt_chr_listitem *chr_listitem = rom->chrs->list;
+  while (chr_listitem) {
+    fwrite(chr_listitem->chr, NRT_CHR_BANK_SIZE, 1, outfile);
+    chr_listitem = chr_listitem->next;
+  }
+
+  // only write the title if it has one.
+  if (strlen(rom->title) > 0) {
+    fwrite(rom->title, NRT_TITLE_MAX_LENGTH, 1, outfile);
+  }
+
+  return true;
+}

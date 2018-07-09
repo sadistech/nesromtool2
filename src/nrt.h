@@ -65,9 +65,10 @@ nrt_chr_listitem* nrt_chr_listitem_last(nrt_chr_list* list);
 int nrt_chr_listitem_count(nrt_chr_listitem* list);
 void nrt_chr_list_free(nrt_chr_list* list);
 
-
+// FIXME: inconsistent function names
 nrt_rom* nrt_rom_create(void);
 void nrt_rom_free(nrt_rom* rom);
 nrt_rom* nrt_read_rom_from_file(FILE* romfile);
+bool nrt_rom_write_to_file(nrt_rom *rom, FILE *outfile);
 
 #endif
