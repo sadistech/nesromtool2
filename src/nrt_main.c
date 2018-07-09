@@ -147,8 +147,8 @@ void action_export(char **argv) {
 
 
 int main(int argc, char **argv, char **env) {
-  char *appname = *(argv++);
-  char *subcommand= *(argv++);
+  char *appname = *(argv++); argc--;
+  char *subcommand= *(argv++); argc--;
 
   if (strcmp(subcommand, "") == 0 ) {
     fprintf(stderr, "Please supply a subcommand.\n");

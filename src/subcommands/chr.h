@@ -7,6 +7,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "../util.h"
+#include "../nrt.h"
+
 void subcommand_chr(int, char**);
 void subcommand_chr_extract(int, char**);
 void subcommand_chr_replace(int, char**);
