@@ -7,3 +7,15 @@ const char *filename_ext(const char *filename) {
     return dot + 1;
 }
 
+/* void vlog(int level, const char *format, ...) { */
+  /* va_list args; */
+  /* va_start(args, format); */
+
+  /* if (level < verbosity) { */
+    /* return; */
+  /* } */
+
+  /* fprintf(stderr, format, args); */
+
+  /* va_end(args); */
+/* } */
