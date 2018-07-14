@@ -82,6 +82,12 @@ chr_opts* subcommand_chr_extract_parse(int argc, char **argv) {
     opts->format = filename_to_output_format(opts->outfile_path);
   }
 
+  if (! opts->format) {
+    fprintf(stderr, "Could not glean the format from the output file name.");
+    free(opts);
+    exit(EXIT_FAILURE);
+  }
+
   if (opts->width < 1 || opts->width > NRT_CHR_TILE_COUNT) {
     fprintf(stderr, "Width must be between 1 and %d\n", NRT_CHR_TILE_COUNT);
     free(opts);
@@ -94,13 +100,76 @@ chr_opts* subcommand_chr_extract_parse(int argc, char **argv) {
   return opts;
 }
 
+chr_opts* subcommand_chr_replace_parse(int argc, char **argv) {
+  chr_opts *opts = (chr_opts*)calloc(1, sizeof(chr_opts));
+
+  static struct option longopts[] = {
+    { "format", required_argument, NULL, 'f' },
+    { "outfile", required_argument, NULL, 'o' },
+    { NULL, 0, NULL, 0 }
+  };
+
+  strcpy(opts->romfile_path, argv[0]);
+
+  int ch;
+
+  while ((ch = getopt_long(argc, argv, "f:o:", longopts, NULL)) != -1) {
+    switch (ch) {
+      case 'f':
+        opts->format = parse_output_format(optarg);
+
+        if (opts->format == null_format) {
+          // the format was invalid
+          fprintf(stderr, "Invalid format: %s\n", optarg);
+          free(opts);
+          exit(EXIT_FAILURE);
+        }
+        break;
+      case 'o':
+        strcpy(opts->sourcefile_path, optarg);
+        break;
+      default:
+        fprintf(stderr, "Invalid argument: -%c\n", ch);
+        free(opts);
+        exit(EXIT_FAILURE);
+    }
+  }
+
+  argc -= optind;
+  argv += optind;
+
+  // read the bank index
+  char *bank_index_str = *(argv++);
+  opts->bank_index = atoi(bank_index_str);
+
+  strcpy(opts->sourcefile_path, *(argv++));
+
+  // try to guess the format if the user didn't supply one
+  if (! opts->format) {
+    opts->format = filename_to_output_format(opts->outfile_path);
+  }
+
+  if (! opts->format) {
+    fprintf(stderr, "Could not glean the format from the output file name.");
+    free(opts);
+    exit(EXIT_FAILURE);
+  }
+
+  if (strlen(opts->outfile_path) == 0) {
+    // clobber the existing ROM
+    strcpy(opts->outfile_path, opts->romfile_path);
+  }
+
+  return opts;
+}
+
 void subcommand_chr(int argc, char **argv) {
   char *action = *(argv++);
 
   if (strcmp(action, "extract") == 0) {
     subcommand_chr_extract(subcommand_chr_extract_parse(argc - 1, argv));
   } else if (strcmp(action, "replace") == 0) {
-    subcommand_chr_replace(argc - 1, argv);
+    subcommand_chr_replace(subcommand_chr_replace_parse(argc - 1, argv));
   }
 }
 
@@ -178,86 +247,27 @@ void subcommand_chr_extract(chr_opts *opts) {
  *  --format=<png|chr>
  *  --outfile=<outfilepath>
  */
-void subcommand_chr_replace(int argc, char **argv) {
-  static struct option longopts[] = {
-    { "format", required_argument, NULL, 'f' },
-    { "outfile", required_argument, NULL, 'o' },
-    { NULL, 0, NULL, 0 }
-  };
-
-  char *infile_path = argv[0]; // don't shift the args
-  char *bank_index_str = NULL;
-
-  char format[32] = "";
-  int bank_index = 0;
-  char outfile_path[1024] = "";
-  char bankfile_path[1024] = "";
-  static char tempfile_path[] = "/tmp/nrt-rom.XXXXXX";
-
-  int ch;
-
-  while ((ch = getopt_long(argc, argv, "f:o:", longopts, NULL)) != -1) {
-    switch (ch) {
-      case 'f':
-        strcpy(format, optarg);
-        break;
-      case 'o':
-        strcpy(outfile_path, optarg);
-        break;
-      case 0:
-        printf("nothing\n");
-        break;
-      default:
-        fprintf(stderr, "Invalid argument: -%c\n", ch);
-        exit(EXIT_FAILURE);
-    }
-  }
-
-  argc -= optind;
-  argv += optind;
-
-  bank_index_str = *(argv++);
-  strcpy(bankfile_path, *(argv++));
-
-  bank_index = atoi(bank_index_str);
-
-  if (strlen(format) == 0) {
-    // figure out the format if it's not passed
-    const char *ext = filename_ext(bankfile_path);
-
-    if (strcmp(ext, "chr") == 0) {
-      strcpy(format, "chr");
-    } else if (strcmp(ext, "png") == 0) {
-      strcpy(format, "png");
-    } else {
-      fprintf(stderr, "Please supply a format with --format=<fmt>\n");
-      exit(EXIT_FAILURE);
-    }
-  }
-
-  if (strlen(outfile_path) == 0) {
-    // clobber the existing ROM
-    strcpy(outfile_path, infile_path);
-  }
-
+void subcommand_chr_replace(chr_opts *opts) {
   // now we want to read in the source file, and get the data we really want
   // then we'll read in the rom, replace the bank and write it to a tempfile
   // then move the tempfile to the final location
 
   nrt_chrbank *chr_bank = NRT_CHR_ALLOC;
 
-  if (strcmp(format, "png") == 0) {
-    FILE *pngfile = fopen(bankfile_path, "r");
+  if (opts->format == png_format) {
+    FILE *pngfile = fopen(opts->sourcefile_path, "r");
     if (!pngfile) {
       perror("Failed to open up bank file");
+      free(opts);
       exit(EXIT_FAILURE);
     }
 
-    nrt_tile_bitmap *tiles = (nrt_tile_bitmap*)malloc(NRT_CHR_TILE_COUNT * sizeof(nrt_tile_bitmap));
+    nrt_tile_bitmap *tiles = (nrt_tile_bitmap*)calloc(NRT_CHR_TILE_COUNT, sizeof(nrt_tile_bitmap));
 
     if (! nrt_png_to_tiles(pngfile, tiles)) {
-      fprintf(stderr, "Failed to read in PNG file: %s\n", bankfile_path);
+      fprintf(stderr, "Failed to read in PNG file: %s\n", opts->sourcefile_path);
       fclose(pngfile);
+      free(opts);
       exit(EXIT_FAILURE);
     }
 
@@ -271,13 +281,15 @@ void subcommand_chr_replace(int argc, char **argv) {
 
     free(raw_tile);
     free(tiles);
-  } else if (strcmp(format, "chr") == 0) {
+  } else if (opts->format == raw_format) {
     printf("Not implemented\n");
     exit(EXIT_FAILURE);
   }
 
+  static char tempfile_path[] = "/tmp/nrt-rom.XXXXXX";
+
   // ok, let's read in the rom file, and replace the chr
-  FILE *romfile = fopen(infile_path, "r");
+  FILE *romfile = fopen(opts->outfile_path, "r");
 
   if (!romfile) {
     perror("Failed to open rom file for reading");
@@ -287,7 +299,7 @@ void subcommand_chr_replace(int argc, char **argv) {
   nrt_rom *rom = nrt_read_rom_from_file(romfile);
   fclose(romfile);
 
-  nrt_chr_listitem *bank_listitem = nrt_chr_listitem_at(rom->chrs, bank_index);
+  nrt_chr_listitem *bank_listitem = nrt_chr_listitem_at(rom->chrs, opts->bank_index);
   free(bank_listitem->chr);
   bank_listitem->chr = chr_bank;
 
@@ -299,6 +311,5 @@ void subcommand_chr_replace(int argc, char **argv) {
   fclose(tempfile);
   nrt_rom_free(rom);
 
-  rename(tempfile_path, outfile_path);
-
+  rename(tempfile_path, opts->outfile_path);
 }

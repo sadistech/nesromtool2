@@ -19,13 +19,16 @@ typedef enum output_format {
 } output_format;
 
 typedef struct chr_opts {
+  char romfile_path[PATH_LENGTH]; // path to rom that we're reading from
+
   output_format format;
 
   int width; // width in tiles
   int bank_index; // index of target bank
 
+  char sourcefile_path[PATH_LENGTH]; // path to the target data file
   char outfile_path[PATH_LENGTH]; // path to the file we're writing to
-  char romfile_path[PATH_LENGTH]; // path to rom that we're reading from
+
 } chr_opts;
 
 output_format parse_output_format(char *format);
@@ -37,7 +40,7 @@ chr_opts* subcommand_chr_replace_parse(int, char**);
 void subcommand_chr(int, char**);
 
 void subcommand_chr_extract(chr_opts *opts);
-void subcommand_chr_replace(int, char**);
+void subcommand_chr_replace(chr_opts *opts);
 
 
 #endif
