@@ -11,16 +11,16 @@
 #include "../nrt.h"
 #include "../subcommands.h"
 
-typedef enum output_format {
+typedef enum chr_output_format {
   null_format,
   raw_format,
   png_format
-} output_format;
+} chr_output_format;
 
 typedef struct chr_opts {
   char romfile_path[PATH_LENGTH]; // path to rom that we're reading from
 
-  output_format format;
+  chr_output_format format;
 
   int width; // width in tiles
   int bank_index; // index of target bank
@@ -30,8 +30,8 @@ typedef struct chr_opts {
 
 } chr_opts;
 
-output_format parse_output_format(char *format);
-output_format filename_to_output_format(char *filename);
+chr_output_format parse_output_format(char *format);
+chr_output_format filename_to_output_format(char *filename);
 
 chr_opts* subcommand_chr_extract_parse(int, char**);
 chr_opts* subcommand_chr_replace_parse(int, char**);

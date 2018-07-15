@@ -1,6 +1,6 @@
 #include "chr.h"
 
-output_format parse_output_format(char *format) {
+chr_output_format parse_chr_output_format(char *format) {
   if (strcmp(format, "raw") == 0) {
     return raw_format;
   } else if (strcmp(format, "png") == 0) {
@@ -10,7 +10,7 @@ output_format parse_output_format(char *format) {
   return null_format;
 }
 
-output_format filename_to_output_format(char *filename) {
+chr_output_format filename_to_chr_output_format(char *filename) {
   // figure out the format if it's not passed
   const char *ext = filename_ext(filename);
 
@@ -46,7 +46,7 @@ chr_opts* subcommand_chr_extract_parse(int argc, char **argv) {
   while ((ch = getopt_long(argc, argv, "f:w:", longopts, NULL)) != -1) {
     switch (ch) {
       case 'f':
-        opts->format = parse_output_format(optarg);
+        opts->format = parse_chr_output_format(optarg);
 
         if (opts->format == null_format) {
           // the format was invalid
@@ -79,7 +79,7 @@ chr_opts* subcommand_chr_extract_parse(int argc, char **argv) {
 
   // try to guess the format if the user didn't supply one
   if (! opts->format) {
-    opts->format = filename_to_output_format(opts->outfile_path);
+    opts->format = filename_to_chr_output_format(opts->outfile_path);
   }
 
   if (! opts->format) {
@@ -116,7 +116,7 @@ chr_opts* subcommand_chr_replace_parse(int argc, char **argv) {
   while ((ch = getopt_long(argc, argv, "f:o:", longopts, NULL)) != -1) {
     switch (ch) {
       case 'f':
-        opts->format = parse_output_format(optarg);
+        opts->format = parse_chr_output_format(optarg);
 
         if (opts->format == null_format) {
           // the format was invalid
@@ -146,7 +146,7 @@ chr_opts* subcommand_chr_replace_parse(int argc, char **argv) {
 
   // try to guess the format if the user didn't supply one
   if (! opts->format) {
-    opts->format = filename_to_output_format(opts->outfile_path);
+    opts->format = filename_to_chr_output_format(opts->outfile_path);
   }
 
   if (! opts->format) {
