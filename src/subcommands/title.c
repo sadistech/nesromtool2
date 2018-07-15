@@ -47,6 +47,12 @@ title_opts* subcommand_title_set_parse(int argc, char **argv) {
 
   strncpy(opts->title, title, NRT_TITLE_MAX_LENGTH);
 
+  // if the user didn't specify an outfile, then we want the outfile to be
+  // the same as the romfile.
+  if (strlen(opts->outfile_path) == 0) {
+    strcpy(opts->outfile_path, opts->romfile_path);
+  }
+
   return opts;
 }
 
@@ -132,17 +138,63 @@ void subcommand_title(int argc, char **argv) {
 }
 
 void subcommand_title_set(title_opts *opts) {
-  printf("Going to set title on %s to: %s\n", opts->romfile_path, opts->title);
-  exit(EXIT_SUCCESS);
+  static char tempfile_path[] = "/tmp/nrt-rom.XXXXXX";
+
+  // ok, let's read in the rom file, and replace the chr
+  FILE *romfile = fopen(opts->romfile_path, "r");
+
+  if (!romfile) {
+    perror("Failed to open rom file for reading");
+    exit(EXIT_FAILURE);
+  }
+
+  nrt_rom *rom = nrt_read_rom_from_file(romfile);
+  fclose(romfile);
+
+  // first we want to zero out the entire title in our in-memory rom
+  // then strcpy() the new title in there
+  bzero(rom->title, NRT_TITLE_MAX_LENGTH);
+  strcpy(rom->title, opts->title);
+
+  int fd = mkstemp(tempfile_path);
+  FILE *tempfile = fdopen(fd, "w");
+
+  nrt_rom_write_to_file(rom, tempfile);
+
+  fclose(tempfile);
+  nrt_rom_free(rom);
+
+  rename(tempfile_path, opts->outfile_path);
 }
 
 void subcommand_title_get(title_opts *opts) {
-  printf("Going to get title on %s\n", opts->romfile_path);
+  FILE *romfile = fopen(opts->romfile_path, "r");
+
+  if (!romfile) {
+    perror("Failed to open rom file for reading");
+    exit(EXIT_FAILURE);
+  }
+
+  nrt_rom *rom = nrt_read_rom_from_file(romfile);
+  fclose(romfile);
+
+  if (strnlen(rom->title, NRT_TITLE_MAX_LENGTH) == 0) {
+    printf("<no-title>\n");
+    nrt_rom_free(rom);
+    free(opts);
+    exit(EXIT_SUCCESS);
+  }
+
+  printf("%s\n", rom->title);
+  nrt_rom_free(rom);
+  free(opts);
+
   exit(EXIT_SUCCESS);
 }
 
 void subcommand_title_remove(title_opts *opts) {
-  printf("Going to remove title from %s\n", opts->romfile_path);
-  exit(EXIT_SUCCESS);
+  // to remove this, we really just need to set the title to a zero-length string.
+  bzero(opts->title, NRT_TITLE_MAX_LENGTH);
+  subcommand_title_set(opts);
 }
 
