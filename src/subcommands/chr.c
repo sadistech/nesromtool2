@@ -170,6 +170,9 @@ void subcommand_chr(int argc, char **argv) {
     SUBCOMMAND(chr, extract);
   } else if (strcmp(action, "replace") == 0) {
     SUBCOMMAND(chr, replace);
+  } else {
+    fprintf(stderr, "Invalid action: %s\n", action);
+    exit(EXIT_FAILURE);
   }
 }
 
