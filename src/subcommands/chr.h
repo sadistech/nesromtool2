@@ -9,6 +9,7 @@
 
 #include "../util.h"
 #include "../nrt.h"
+#include "../subcommands.h"
 
 typedef enum output_format {
   null_format,

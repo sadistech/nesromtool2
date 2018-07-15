@@ -167,9 +167,9 @@ void subcommand_chr(int argc, char **argv) {
   char *action = *(argv++);
 
   if (strcmp(action, "extract") == 0) {
-    subcommand_chr_extract(subcommand_chr_extract_parse(argc - 1, argv));
+    SUBCOMMAND(chr, extract);
   } else if (strcmp(action, "replace") == 0) {
-    subcommand_chr_replace(subcommand_chr_replace_parse(argc - 1, argv));
+    SUBCOMMAND(chr, replace);
   }
 }
 
