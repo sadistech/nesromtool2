@@ -181,6 +181,7 @@ void subcommand_chr_extract(chr_opts *opts) {
   FILE *ifile = fopen(opts->romfile_path, "r");
   if (!ifile) {
     fprintf(stderr, "Failed to open file: %s\n", opts->romfile_path);
+    free(opts);
     exit(EXIT_FAILURE);
   }
 
@@ -197,6 +198,7 @@ void subcommand_chr_extract(chr_opts *opts) {
     fprintf(stderr, "Rom file does not look valid: %s\n", opts->romfile_path);
     fclose(ifile);
     free(header);
+    free(opts);
     exit(EXIT_FAILURE);
   }
 
@@ -206,6 +208,7 @@ void subcommand_chr_extract(chr_opts *opts) {
     fclose(ifile);
     free(header);
     free(chr);
+    free(opts);
     exit(EXIT_FAILURE);
   }
 
