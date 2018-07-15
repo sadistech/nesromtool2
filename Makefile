@@ -7,18 +7,19 @@ nrtbuilt=$(builtdir)/nrt
 rombuilder=$(builtdir)/nrt_builder
 
 srcfiles=\
-		 $(libsrcdir)/error.c \
-		 $(libsrcdir)/util.c \
-		 $(libsrcdir)/header.c \
-		 $(libsrcdir)/prg.c \
-		 $(libsrcdir)/tile.c \
-		 $(libsrcdir)/chr.c \
-		 $(libsrcdir)/title.c \
-		 $(srcdir)/nrt.c \
-		 $(srcdir)/util.c \
-		 $(srcdir)/subcommands/prg.c \
-		 $(srcdir)/subcommands/chr.c \
-		 $(srcdir)/subcommands/title.c
+		$(libsrcdir)/error.c \
+		$(libsrcdir)/util.c \
+		$(libsrcdir)/header.c \
+		$(libsrcdir)/prg.c \
+		$(libsrcdir)/tile.c \
+		$(libsrcdir)/chr.c \
+		$(libsrcdir)/title.c \
+		$(srcdir)/nrt.c \
+		$(srcdir)/util.c \
+		$(srcdir)/subcommands/info.c \
+		$(srcdir)/subcommands/prg.c \
+		$(srcdir)/subcommands/chr.c \
+		$(srcdir)/subcommands/title.c
 
 headers=\
 		$(libsrcdir)/error.h \
@@ -31,6 +32,7 @@ headers=\
 		$(srcdir)/nrt.h \
 		$(srcdir)/util.h \
 		$(srcdir)/subcommands.h \
+		$(srcdir)/subcommands/info.h \
 		$(srcdir)/subcommands/prg.h \
 		$(srcdir)/subcommands/chr.h \
 		$(srcdir)/subcommands/title.h
