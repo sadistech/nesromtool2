@@ -8,6 +8,7 @@
 
 #include "util.h"
 
+#include "subcommands/prg.h"
 #include "subcommands/chr.h"
 #include "subcommands/title.h"
 
