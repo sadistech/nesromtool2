@@ -155,6 +155,8 @@ int main(int argc, char **argv, char **env) {
     exit(EXIT_FAILURE);
   } else if (strcmp(subcommand, "chr") == 0) {
     subcommand_chr(argc - 1, argv);
+  } else if (strcmp(subcommand, "title") == 0) {
+    subcommand_title(argc - 1, argv);
   } else {
     fprintf(stderr, "Unknown subcommand: %s\n", subcommand);
     exit(EXIT_FAILURE);

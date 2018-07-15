@@ -1,9 +1,11 @@
-#ifndef _NRT_UTIL_H_
-#define _NRT_UTIL_H_
+#ifndef _UTIL_H_
+#define _UTIL_H_
 
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
+
+#define PATH_LENGTH 1024
 
 enum LogLevel {
   Normal,

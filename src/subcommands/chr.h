@@ -1,5 +1,5 @@
-#ifndef _NRT_SUBCOMMANDS_CHR_H_
-#define _NRT_SUBCOMMANDS_CHR_H_
+#ifndef _SUBCOMMANDS_CHR_H_
+#define _SUBCOMMANDS_CHR_H_
 
 #include <getopt.h>
 #include <stdio.h>
@@ -9,8 +9,6 @@
 
 #include "../util.h"
 #include "../nrt.h"
-
-#define PATH_LENGTH 1024
 
 typedef enum output_format {
   null_format,
