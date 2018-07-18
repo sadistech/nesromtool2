@@ -9,6 +9,7 @@
 
 #include "nrt.h"
 #include "subcommands.h"
+#include "help.h"
 
 int main(int argc, char **argv, char **env) {
   char *appname = *(argv++); argc--;
@@ -17,6 +18,8 @@ int main(int argc, char **argv, char **env) {
   if (strcmp(subcommand, "") == 0 ) {
     fprintf(stderr, "Please supply a subcommand.\n");
     exit(EXIT_FAILURE);
+  } else if (strcmp(subcommand, "help") == 0) {
+    print_usage();
   } else if (strcmp(subcommand, "info") == 0) {
     subcommand_info(argc - 1, argv);
   } else if (strcmp(subcommand, "chr") == 0) {

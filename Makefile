@@ -16,6 +16,7 @@ srcfiles=\
 		$(libsrcdir)/title.c \
 		$(srcdir)/nrt.c \
 		$(srcdir)/util.c \
+		$(srcdir)/help.c \
 		$(srcdir)/subcommands/info.c \
 		$(srcdir)/subcommands/prg.c \
 		$(srcdir)/subcommands/chr.c \
@@ -31,6 +32,7 @@ headers=\
 		$(libsrcdir)/title.h \
 		$(srcdir)/nrt.h \
 		$(srcdir)/util.h \
+		$(srcdir)/help.h \
 		$(srcdir)/subcommands.h \
 		$(srcdir)/subcommands/info.h \
 		$(srcdir)/subcommands/prg.h \
