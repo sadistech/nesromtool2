@@ -43,22 +43,22 @@ typedef struct help_cols {
 
 void p_header(char *);
 void p_newline(void);
+void p_indent(int level, char *str);
+void p_section(char *header, char *usage, struct help_cols *fields, struct help_cols *out_opts);
+void p_cols(help_opts *opts, struct help_cols *cols);
 
-void print_cols(help_opts *opts, struct help_cols *cols);
 int widest_cols_left(struct help_cols *cols);
-
-void print_indent(int level, char *str);
-
-void print_help_header(char *appname, char *description);
-void print_help_usage(char *appname, char *usage);
-void print_section(char *header, char *usage, struct help_cols *fields, struct help_cols *out_opts);
 
 void print_version();
 
 void print_usage();
 void print_usage_info();
 void print_usage_prg();
+
 void print_usage_chr();
+void print_usage_chr_extract();
+void print_usage_chr_replace();
+
 void print_usage_title();
 
 #endif

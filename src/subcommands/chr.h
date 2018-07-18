@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "../help.h"
 #include "../util.h"
 #include "../nrt.h"
 #include "../subcommands.h"
@@ -30,8 +31,8 @@ typedef struct chr_opts {
 
 } chr_opts;
 
-chr_output_format parse_output_format(char *format);
-chr_output_format filename_to_output_format(char *filename);
+chr_output_format parse_chr_output_format(char *format);
+chr_output_format filename_to_chr_output_format(char *filename);
 
 chr_opts* subcommand_chr_extract_parse(int, char**);
 chr_opts* subcommand_chr_replace_parse(int, char**);

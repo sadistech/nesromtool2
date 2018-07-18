@@ -34,17 +34,28 @@ chr_opts* subcommand_chr_extract_parse(int argc, char **argv) {
   chr_opts *opts = (chr_opts*)calloc(1, sizeof(chr_opts));
 
   static struct option longopts[] = {
+    { "help", no_argument, NULL, 'h' },
     { "format", required_argument, NULL, 'f' },
     { "width", required_argument, NULL, 'w' },
     { NULL, 0, NULL, 0 }
   };
 
+  if (strcmp(argv[0], "--help") == 0) {
+    print_usage_chr_extract();
+    exit(EXIT_SUCCESS);
+  }
+
   strcpy(opts->romfile_path, argv[0]); // don't shift the args
 
   int ch;
 
-  while ((ch = getopt_long(argc, argv, "f:w:", longopts, NULL)) != -1) {
+  while ((ch = getopt_long(argc, argv, "f:w:h", longopts, NULL)) != -1) {
     switch (ch) {
+      case 'h':
+        print_usage_chr_extract();
+        exit(EXIT_SUCCESS);
+        break;
+
       case 'f':
         opts->format = parse_chr_output_format(optarg);
 
@@ -104,10 +115,16 @@ chr_opts* subcommand_chr_replace_parse(int argc, char **argv) {
   chr_opts *opts = (chr_opts*)calloc(1, sizeof(chr_opts));
 
   static struct option longopts[] = {
+    { "help", no_argument, NULL, 'h' },
     { "format", required_argument, NULL, 'f' },
     { "outfile", required_argument, NULL, 'o' },
     { NULL, 0, NULL, 0 }
   };
+
+  if (strcmp(argv[0], "--help") == 0) {
+    print_usage_chr_replace();
+    exit(EXIT_SUCCESS);
+  }
 
   strcpy(opts->romfile_path, argv[0]);
 
@@ -115,6 +132,11 @@ chr_opts* subcommand_chr_replace_parse(int argc, char **argv) {
 
   while ((ch = getopt_long(argc, argv, "f:o:", longopts, NULL)) != -1) {
     switch (ch) {
+      case 'h':
+        print_usage_chr_replace();
+        exit(EXIT_SUCCESS);
+        break;
+
       case 'f':
         opts->format = parse_chr_output_format(optarg);
 
@@ -170,6 +192,9 @@ void subcommand_chr(int argc, char **argv) {
     SUBCOMMAND(chr, extract);
   } else if (strcmp(action, "replace") == 0) {
     SUBCOMMAND(chr, replace);
+  } else if (strcmp(action, "--help") == 0) {
+    print_usage_chr();
+    exit(EXIT_SUCCESS);
   } else {
     fprintf(stderr, "Invalid action: %s\n", action);
     exit(EXIT_FAILURE);

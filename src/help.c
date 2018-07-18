@@ -8,7 +8,47 @@ void p_newline(void) {
   printf("\n");
 }
 
-void print_cols(help_opts *opts, struct help_cols *cols) {
+void p_indent(int level, char *str) {
+  char *token, *newstr, *tofree;
+  char indent_string[256] = "";
+  bzero(indent_string, 256);
+
+  tofree = newstr = strdup(str);
+
+  int i = 0;
+
+  for (i = 0; i < level; i++) {
+    indent_string[i] = ' ';
+    indent_string[i * 2 + 1] = ' ';
+  }
+
+  while((token = strsep(&newstr, "\n")) != NULL) {
+    printf("%s%s\n", indent_string, token);
+  }
+
+  free(tofree);
+}
+
+void p_section(char *header, char *usage, struct help_cols *fields, struct help_cols *out_opts) {
+  help_opts *opts = HELP_ALLOC_OPTS;
+  opts->indent = 1;
+
+  p_header(header);
+
+  p_indent(1, usage);
+
+  if (fields) {
+    p_header("Fields");
+    p_cols(opts, fields);
+  }
+
+  if (out_opts) {
+    p_header("Options");
+    p_cols(opts, out_opts);
+  }
+}
+
+void p_cols(help_opts *opts, struct help_cols *cols) {
   struct help_cols *t = cols;
   int usage_width = widest_cols_left(cols);
   char indent_string[256] = "";
@@ -48,58 +88,6 @@ int widest_cols_left(struct help_cols *cols) {
   return longest;
 }
 
-void print_indent(int level, char *str) {
-  char *token, *tofree;
-  char indent_string[256] = "";
-  bzero(indent_string, 256);
-
-  int i = 0;
-
-  for (i = 0; i < level; i++) {
-    indent_string[i] = ' ';
-    indent_string[i * 2 + 1] = ' ';
-  }
-
-  tofree = strdup(str);
-
-  while((token = strsep(&str, "\n")) != NULL) {
-    printf("%s%s\n", indent_string, token);
-  }
-
-  free(tofree);
-}
-
-void print_help_header(char *appname, char *description) {
-  p_header(appname);
-  print_indent(1, description);
-  p_newline();
-}
-
-void print_help_usage(char *appname, char *usage) {
-  p_header("Usage");
-  print_indent(1, usage);
-  p_newline();
-}
-
-void print_section(char *header, char *usage, struct help_cols *fields, struct help_cols *out_opts) {
-  help_opts *opts = HELP_ALLOC_OPTS;
-  opts->indent = 1;
-
-  p_header(header);
-
-  print_indent(1, usage);
-
-  if (fields) {
-    p_header("Fields");
-    print_cols(opts, fields);
-  }
-
-  if (out_opts) {
-    p_header("Options");
-    print_cols(opts, out_opts);
-  }
-}
-
 void print_version() {
   printf("%s\n", VERSION);
 }
@@ -108,9 +96,13 @@ void print_usage() {
   help_opts *opts = HELP_ALLOC_OPTS;
   opts->indent = 1;
 
-  print_help_header(APPNAME, "A tool for working with NES ROM files in the iNES v1 format.");
-  print_help_usage(APPNAME, "<subcommand> [ <subcommand-args> ... ]");
+  p_header(APPNAME);
+  p_indent(1, "A tool for working with NES ROM files in the iNES v1 format");
+  p_newline();
 
+  p_header("Usage");
+  p_indent(1, APPNAME " <subcommand> [ <subcommand-args> ... ]");
+  p_newline();
 
   p_header("Subcommands");
 
@@ -123,7 +115,7 @@ void print_usage() {
     NULL_COL
   };
 
-  print_cols(opts, subcommand_table);
+  p_cols(opts, subcommand_table);
 
   p_newline();
 
@@ -177,7 +169,7 @@ void print_usage_prg() {
     NULL_COL
   };
 
-  print_section(
+  p_section(
     "Extraction",
     "nrt prg extract <rom> [ <options> ... ] <bank-index> <outfile>",
     extraction_fields,
@@ -189,26 +181,105 @@ void print_usage_chr() {
   help_opts *opts = HELP_ALLOC_OPTS;
   opts->indent = 1;
 
-  printf(
-    "\n"
-    "%s info\n"
-    "  Dump all information about the given ROM. This includes a validation\n"
-    "  step, mapper information, number of PRG and CHR banks and title (if it\n"
-    "  has one)\n"
-    "\n"
-    "Usage:"
-    "  %s info <rom>\n"
-    "\n",
-    APPNAME, APPNAME
-  );
+  p_header(APPNAME " chr");
+  p_indent(1, "Perform CHR bank action such as extraction and replacement");
+  p_newline();
 
-  printf("Actions:\n");
+  p_header("Usage");
+  p_indent(1, APPNAME " chr <action> [ <action-args> ... ]");
+  p_newline();
 
-  static struct help_cols subcommand_table[] = {
-    { NULL, NULL }
+  p_header("Actions");
+
+  static struct help_cols action_cols[] = {
+    "extract", "Extract the given CHR to either a raw CHR bank or a PNG file",
+    "replace", "Replace a CHR bank with the given PNG or raw CHR bank",
+    NULL_COL
   };
 
-  print_cols(opts, subcommand_table);
+  p_cols(opts, action_cols);
+
+  p_newline();
+
+  printf("For additional usage information for the above actions run `%s chr <action> --help`\n", APPNAME);
+
+  p_newline();
+}
+
+void print_usage_chr_extract() {
+  help_opts *opts = HELP_ALLOC_OPTS;
+  opts->indent = 1;
+
+  static struct help_cols option_cols[] = {
+    "--help", "Display this help",
+    "-f | --format <format>", "Export to the selected format: raw or png",
+    "-w | --width <width>", "Applicable only for PNG output: The number of tiles wide the final image should be (default: 16)",
+    NULL_COL
+  };
+
+  static struct help_cols arg_cols[] = {
+    "<rom>", "The path to the source ROM file to extract from",
+    "<bank-index>", "The zero-based index of the bank to extract",
+    "<outflie>", "The output file.",
+    NULL_COL
+  };
+
+  p_header(APPNAME " chr extract");
+  p_indent(1,
+      "Extract a CHR bank from a ROM file to either a raw CHR bank file or a PNG bitmap\n"
+      "The format is determined by either the file extension of the output file or\n"
+      "the value of the -f or --format flag"
+  );
+  p_newline();
+
+  p_header("Usage");
+  p_indent(1, APPNAME " chr extract <rom> [ <options> ... ] <bank-index> <outfile>");
+  p_newline();
+
+  p_header("Arguments");
+  p_cols(opts, arg_cols);
+  p_newline();
+
+  p_header("Options");
+  p_cols(opts, option_cols);
+  p_newline();
+}
+
+void print_usage_chr_replace() {
+  help_opts *opts = HELP_ALLOC_OPTS;
+  opts->indent = 1;
+
+  static struct help_cols option_cols[] = {
+    "--help", "Display this help",
+    "-f | --format <format>", "Export to the selected format: raw or png",
+    "-o | --outfile <path>", "When replacing the bank, write the updated ROM file to this path rather than clobbering the source ROM",
+    NULL_COL
+  };
+
+  static struct help_cols arg_cols[] = {
+    "<rom>", "The path to the source ROM file to extract from",
+    "<bank-index>", "The zero-based index of the bank to extract",
+    "<chrbank>", "The source CHR bank file; either a raw CHR bank or a png bitmap",
+    NULL_COL
+  };
+
+  p_header(APPNAME " chr replace");
+  p_indent(1,
+      "Replace a CHR bank in a ROM file with the given bank or png image."
+  );
+  p_newline();
+
+  p_header("Usage");
+  p_indent(1, APPNAME " chr replace <rom> [ <options> ... ] <bank-index> <chrbank>");
+  p_newline();
+
+  p_header("Arguments");
+  p_cols(opts, arg_cols);
+  p_newline();
+
+  p_header("Options");
+  p_cols(opts, option_cols);
+  p_newline();
 }
 
 void print_usage_title() {
@@ -234,6 +305,6 @@ void print_usage_title() {
     { NULL, NULL }
   };
 
-  print_cols(opts, subcommand_table);
+  p_cols(opts, subcommand_table);
 }
 
