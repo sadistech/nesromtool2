@@ -53,7 +53,10 @@ void print_version();
 
 void print_usage();
 void print_usage_info();
+
 void print_usage_prg();
+void print_usage_prg_extract();
+void print_usage_prg_replace();
 
 void print_usage_chr();
 void print_usage_chr_extract();

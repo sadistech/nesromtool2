@@ -149,32 +149,100 @@ void print_usage_prg() {
   help_opts *opts = HELP_ALLOC_OPTS;
   opts->indent = 1;
 
-  printf(
-    "\n"
-    "%s prg\n"
-    "\n"
-    "\n",
-    APPNAME
-  );
+  p_header(APPNAME " prg");
+  p_indent(1, "Perform PRG bank action such as extraction and replacement");
+  p_newline();
 
-  static struct help_cols extraction_fields[] = {
-    { "<rom>", "Path to the .nes target ROM file" },
-    { "<bank-index>", "Zero-based index of target PRG bank to extract" },
-    { "<outfile>", "Path to the file to write the extracted PRG bank" },
+  p_header("Usage");
+  p_indent(1, APPNAME " prg <action> [ <action-args> ... ]");
+  p_newline();
+
+  p_header("Actions");
+
+  static struct help_cols action_cols[] = {
+    "extract", "Extract the given PRG bank index to a raw PRG bank",
+    "replace", "Replace a PRG bank index with the given PRG bank",
     NULL_COL
   };
 
-  static struct help_cols extraction_options[] = {
-    { "-f | --format <format>", "The format of the output file. Currently can only be 'raw'" },
+  p_cols(opts, action_cols);
+
+  p_newline();
+
+  printf("For additional usage information for the above actions run `%s prg <action> --help`\n", APPNAME);
+
+  p_newline();
+}
+
+void print_usage_prg_extract() {
+  help_opts *opts = HELP_ALLOC_OPTS;
+  opts->indent = 1;
+
+  static struct help_cols option_cols[] = {
+    "--help", "Display this help",
     NULL_COL
   };
 
-  p_section(
-    "Extraction",
-    "nrt prg extract <rom> [ <options> ... ] <bank-index> <outfile>",
-    extraction_fields,
-    extraction_options
+  static struct help_cols arg_cols[] = {
+    "<rom>", "The path to the source ROM file to extract from",
+    "<bank-index>", "The zero-based index of the PRG bank to extract",
+    "<outflie>", "The output file.",
+    NULL_COL
+  };
+
+  p_header(APPNAME " prg extract");
+  p_indent(1,
+    "Extract a PRG bank to a separate file."
   );
+  p_newline();
+
+  p_header("Usage");
+  p_indent(1, APPNAME " prg extract <rom> [ <options> ... ] <bank-index> <outfile>");
+  p_newline();
+
+  p_header("Arguments");
+  p_cols(opts, arg_cols);
+  p_newline();
+
+  p_header("Options");
+  p_cols(opts, option_cols);
+  p_newline();
+}
+
+void print_usage_prg_replace() {
+  help_opts *opts = HELP_ALLOC_OPTS;
+  opts->indent = 1;
+
+  static struct help_cols option_cols[] = {
+    "--help", "Display this help",
+    "-o | --outfile <path>", "When replacing the bank, write the updated ROM file to this path rather than clobbering the source ROM",
+    NULL_COL
+  };
+
+  static struct help_cols arg_cols[] = {
+    "<rom>", "The path to the source ROM file to extract from",
+    "<bank-index>", "The zero-based index of the bank to replace",
+    "<prgbank>", "The source PRG bank file; a raw PRG bank",
+    NULL_COL
+  };
+
+  p_header(APPNAME " prg replace");
+  p_indent(1,
+      "Replace a PRG bank in a ROM file with the given bank file"
+  );
+  p_newline();
+
+  p_header("Usage");
+  p_indent(1, APPNAME " prg replace <rom> [ <options> ... ] <bank-index> <prgbank>");
+  p_newline();
+
+  p_header("Arguments");
+  p_cols(opts, arg_cols);
+  p_newline();
+
+  p_header("Options");
+  p_cols(opts, option_cols);
+  p_newline();
 }
 
 void print_usage_chr() {
@@ -219,8 +287,8 @@ void print_usage_chr_extract() {
 
   static struct help_cols arg_cols[] = {
     "<rom>", "The path to the source ROM file to extract from",
-    "<bank-index>", "The zero-based index of the bank to extract",
-    "<outflie>", "The output file.",
+    "<bank-index>", "The zero-based index of the CHR bank to extract",
+    "<outflie>", "The output file",
     NULL_COL
   };
 
@@ -251,15 +319,15 @@ void print_usage_chr_replace() {
 
   static struct help_cols option_cols[] = {
     "--help", "Display this help",
-    "-f | --format <format>", "Export to the selected format: raw or png",
+    "-f | --format <format>", "Import from the selected format: raw or png; If not passed, the format will be guessed from the file extension of the sourcefile",
     "-o | --outfile <path>", "When replacing the bank, write the updated ROM file to this path rather than clobbering the source ROM",
     NULL_COL
   };
 
   static struct help_cols arg_cols[] = {
-    "<rom>", "The path to the source ROM file to extract from",
-    "<bank-index>", "The zero-based index of the bank to extract",
-    "<chrbank>", "The source CHR bank file; either a raw CHR bank or a png bitmap",
+    "<rom>", "The path to the source ROM file to replace the CHR bank",
+    "<bank-index>", "The zero-based index of the bank to replace",
+    "<sourcefile>", "The source CHR bank file; either a raw CHR bank or a png bitmap",
     NULL_COL
   };
 
@@ -280,6 +348,13 @@ void print_usage_chr_replace() {
   p_header("Options");
   p_cols(opts, option_cols);
   p_newline();
+
+  p_header("Notes");
+  p_indent(1,
+      "When importing a PNG file, the file MUST contain 256 8x8 pixel tiles and\n"
+      "be in indexed color mode. Only the colors 0-3 of the file's pallete will\n"
+      "be used when importing into the ROM."
+  );
 }
 
 void print_usage_title() {

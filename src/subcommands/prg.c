@@ -29,9 +29,15 @@ prg_opts* subcommand_prg_extract_parse(int argc, char **argv) {
   prg_opts *opts = (prg_opts*)calloc(1, sizeof(prg_opts));
 
   static struct option longopts[] = {
+    { "help", no_argument, NULL, 'h' },
     { "format", required_argument, NULL, 'f' },
     { NULL, 0, NULL, 0 }
   };
+
+  if (strcmp(argv[0], "--help") == 0) {
+    print_usage_prg_extract();
+    exit(EXIT_SUCCESS);
+  }
 
   strcpy(opts->romfile_path, argv[0]); // don't shift the args
 
@@ -39,6 +45,10 @@ prg_opts* subcommand_prg_extract_parse(int argc, char **argv) {
 
   while ((ch = getopt_long(argc, argv, "f:", longopts, NULL)) != -1) {
     switch (ch) {
+      case 'h':
+        print_usage_prg_extract();
+        exit(EXIT_SUCCESS);
+        break;
       case 'f':
         opts->format = parse_prg_output_format(optarg);
 
@@ -93,10 +103,16 @@ prg_opts* subcommand_prg_replace_parse(int argc, char **argv) {
   prg_opts *opts = (prg_opts*)calloc(1, sizeof(prg_opts));
 
   static struct option longopts[] = {
+    { "help", no_argument, NULL, 'h' },
     { "format", required_argument, NULL, 'f' },
     { "outfile", required_argument, NULL, 'o' },
     { NULL, 0, NULL, 0 }
   };
+
+  if (strcmp(argv[0], "--help") == 0) {
+    print_usage_prg_replace();
+    exit(EXIT_SUCCESS);
+  }
 
   strcpy(opts->romfile_path, argv[0]);
 
@@ -104,6 +120,11 @@ prg_opts* subcommand_prg_replace_parse(int argc, char **argv) {
 
   while ((ch = getopt_long(argc, argv, "f:o:", longopts, NULL)) != -1) {
     switch (ch) {
+      case 'h':
+        print_usage_prg_replace();
+        exit(EXIT_SUCCESS);
+        break;
+
       case 'f':
         opts->format = parse_prg_output_format(optarg);
 
@@ -160,6 +181,9 @@ void subcommand_prg(int argc, char **argv) {
     SUBCOMMAND(prg, extract);
   } else if (strcmp(action, "replace") == 0) {
     SUBCOMMAND(prg, replace);
+  } else if (strcmp(action, "--help") == 0) {
+    print_usage_prg();
+    exit(EXIT_SUCCESS);
   } else {
     fprintf(stderr, "Invalid action: %s\n", action);
     exit(EXIT_FAILURE);
