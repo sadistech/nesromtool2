@@ -63,5 +63,8 @@ void print_usage_chr_extract();
 void print_usage_chr_replace();
 
 void print_usage_title();
+void print_usage_title_get();
+void print_usage_title_set();
+void print_usage_title_remove();
 
 #endif

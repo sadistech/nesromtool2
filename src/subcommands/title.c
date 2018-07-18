@@ -10,16 +10,27 @@ title_opts* subcommand_title_set_parse(int argc, char **argv) {
   title_opts *opts = (title_opts*)calloc(1, sizeof(title_opts));
 
   static struct option longopts[] = {
+    { "help", no_argument, NULL, 'h' },
     { "outfile", required_argument, NULL, 'o' },
     { NULL, 0, NULL, 0 }
   };
+
+  if (strcmp(argv[0], "--help") == 0) {
+    print_usage_title_set();
+    exit(EXIT_SUCCESS);
+  }
 
   strcpy(opts->romfile_path, argv[0]); // don't shift the args
 
   int ch;
 
-  while ((ch = getopt_long(argc, argv, "o:", longopts, NULL)) != -1) {
+  while ((ch = getopt_long(argc, argv, "o:h", longopts, NULL)) != -1) {
     switch (ch) {
+      case 'h':
+        print_usage_title_set();
+        exit(EXIT_SUCCESS);
+        break;
+
       case 'o':
         strcpy(opts->outfile_path, optarg);
 
@@ -64,15 +75,26 @@ title_opts* subcommand_title_get_parse(int argc, char **argv) {
   title_opts *opts = (title_opts*)calloc(1, sizeof(title_opts));
 
   static struct option longopts[] = {
+    { "help", no_argument, NULL, 'h' },
     { NULL, 0, NULL, 0 }
   };
+
+  if (strcmp(argv[0], "--help") == 0) {
+    print_usage_title_get();
+    exit(EXIT_SUCCESS);
+  }
 
   strcpy(opts->romfile_path, argv[0]); // don't shift the args
 
   int ch;
 
-  while ((ch = getopt_long(argc, argv, "", longopts, NULL)) != -1) {
+  while ((ch = getopt_long(argc, argv, "h", longopts, NULL)) != -1) {
     switch (ch) {
+      case 'h':
+        print_usage_title_get();
+        exit(EXIT_SUCCESS);
+        break;
+
       case 0:
         break;
       default:
@@ -97,16 +119,27 @@ title_opts* subcommand_title_remove_parse(int argc, char **argv) {
   title_opts *opts = (title_opts*)calloc(1, sizeof(title_opts));
 
   static struct option longopts[] = {
+    { "help", no_argument, NULL, 'h' },
     { "outfile", required_argument, NULL, 'o' },
     { NULL, 0, NULL, 0 }
   };
+
+  if (strcmp(argv[0], "--help") == 0) {
+    print_usage_title_remove();
+    exit(EXIT_SUCCESS);
+  }
 
   strcpy(opts->romfile_path, argv[0]); // don't shift the args
 
   int ch;
 
-  while ((ch = getopt_long(argc, argv, "o:", longopts, NULL)) != -1) {
+  while ((ch = getopt_long(argc, argv, "o:h", longopts, NULL)) != -1) {
     switch (ch) {
+      case 'h':
+        print_usage_title_remove();
+        exit(EXIT_SUCCESS);
+        break;
+
       case 'o':
         strcpy(opts->outfile_path, optarg);
 
@@ -134,7 +167,14 @@ void subcommand_title(int argc, char **argv) {
     SUBCOMMAND(title, get);
   } else if (strcmp(action, "remove") == 0) {
     SUBCOMMAND(title, remove);
+  } else if (strcmp(action, "--help") == 0) {
+    print_usage_title();
+    exit(EXIT_SUCCESS);
+  } else {
+    fprintf(stderr, "Invalid action: %s\n", action);
+    exit(EXIT_FAILURE);
   }
+
 }
 
 void subcommand_title_set(title_opts *opts) {

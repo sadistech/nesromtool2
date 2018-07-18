@@ -260,8 +260,8 @@ void print_usage_chr() {
   p_header("Actions");
 
   static struct help_cols action_cols[] = {
-    "extract", "Extract the given CHR to either a raw CHR bank or a PNG file",
-    "replace", "Replace a CHR bank with the given PNG or raw CHR bank",
+    { "extract", "Extract the given CHR to either a raw CHR bank or a PNG file" },
+    { "replace", "Replace a CHR bank with the given PNG or raw CHR bank" },
     NULL_COL
   };
 
@@ -361,25 +361,136 @@ void print_usage_title() {
   help_opts *opts = HELP_ALLOC_OPTS;
   opts->indent = 1;
 
-  printf(
-    "\n"
-    "%s info\n"
-    "  Dump all information about the given ROM. This includes a validation\n"
-    "  step, mapper information, number of PRG and CHR banks and title (if it\n"
-    "  has one)\n"
-    "\n"
-    "Usage:"
-    "  %s info <rom>\n"
-    "\n",
-    APPNAME, APPNAME
+  p_header(APPNAME " title");
+  p_indent(1,
+      "Perform actions related to the title metadata in an NES ROM such as setting,\n"
+      "getting and removing the metadata. Title metadata is stored at the end of\n"
+      "the ROM file and is not consistently supported by emulators, however should\n"
+      "not affect the playability of the file itself."
   );
+  p_newline();
 
-  printf("Actions:\n");
+  p_header("Usage");
+  p_indent(1, APPNAME " title <action> [ <action-args> ... ]");
+  p_newline();
 
-  static struct help_cols subcommand_table[] = {
-    { NULL, NULL }
+  p_header("Actions");
+
+  static struct help_cols action_cols[] = {
+    { "get", "Read the title metadata from the given ROM and output to STDOUT" },
+    { "set", "Set the title to the provided string value" },
+    { "remove", "Remove the title metadata entirely from the given ROM file" },
+    NULL_COL
   };
 
-  p_cols(opts, subcommand_table);
+  p_cols(opts, action_cols);
+
+  p_newline();
+
+  printf("For additional usage information for the above actions run `%s title <action> --help`\n", APPNAME);
+
+  p_newline();
+}
+
+void print_usage_title_get() {
+  help_opts *opts = HELP_ALLOC_OPTS;
+  opts->indent = 1;
+
+  static struct help_cols option_cols[] = {
+    "--help", "Display this help",
+    NULL_COL
+  };
+
+  static struct help_cols arg_cols[] = {
+    "<rom>", "The path to the source ROM file to read the title",
+    NULL_COL
+  };
+
+  p_header(APPNAME " title get");
+  p_indent(1,
+      "Read the title metadata (if there is any) and output to STDOUT.\n"
+      "If there is no title metadata, nothing will be output."
+  );
+  p_newline();
+
+  p_header("Usage");
+  p_indent(1, APPNAME " title get <rom>");
+  p_newline();
+
+  p_header("Arguments");
+  p_cols(opts, arg_cols);
+  p_newline();
+
+  p_header("Options");
+  p_cols(opts, option_cols);
+  p_newline();
+}
+
+void print_usage_title_set() {
+  help_opts *opts = HELP_ALLOC_OPTS;
+  opts->indent = 1;
+
+  static struct help_cols option_cols[] = {
+    "--help", "Display this help",
+    NULL_COL
+  };
+
+  static struct help_cols arg_cols[] = {
+    "<rom>", "The path to the ROM file to set the title on",
+    "<title>", "The new title to set (max: 256 chars)",
+    NULL_COL
+  };
+
+  p_header(APPNAME " title set");
+  p_indent(1,
+      "Set the title metadata on the given ROM. Titles can be a maximum of 256 chars.\n"
+      "If the title is an empty string, then remove the title entirely."
+  );
+  p_newline();
+
+  p_header("Usage");
+  p_indent(1, APPNAME " title set <rom> <title>");
+  p_newline();
+
+  p_header("Arguments");
+  p_cols(opts, arg_cols);
+  p_newline();
+
+  p_header("Options");
+  p_cols(opts, option_cols);
+  p_newline();
+}
+
+void print_usage_title_remove() {
+  help_opts *opts = HELP_ALLOC_OPTS;
+  opts->indent = 1;
+
+  static struct help_cols option_cols[] = {
+    "--help", "Display this help",
+    NULL_COL
+  };
+
+  static struct help_cols arg_cols[] = {
+    "<rom>", "The path to the source ROM file to remove the title",
+    NULL_COL
+  };
+
+  p_header(APPNAME " title remove");
+  p_indent(1,
+      "Remove the title metadata from the given ROM file."
+  );
+  p_newline();
+
+  p_header("Usage");
+  p_indent(1, APPNAME " title remove <rom>");
+  p_newline();
+
+  p_header("Arguments");
+  p_cols(opts, arg_cols);
+  p_newline();
+
+  p_header("Options");
+  p_cols(opts, option_cols);
+  p_newline();
 }
 
