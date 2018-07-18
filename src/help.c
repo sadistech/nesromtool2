@@ -131,18 +131,16 @@ void print_usage_info() {
   help_opts *opts = HELP_ALLOC_OPTS;
   opts->indent = 1;
 
-  printf(
-    "\n"
-    "%s info\n"
-    "  Dump all information about the given ROM. This includes a validation\n"
-    "  step, mapper information, number of PRG and CHR banks and title (if it\n"
-    "  has one)\n"
-    "\n"
-    "Usage:"
-    "  %s info <rom>\n"
-    "\n",
-    APPNAME, APPNAME
+  p_header(APPNAME " info");
+  p_indent(1,
+      "Print verbose information about the given ROM file including whether it's valid,\n"
+      "the number of PRG and CHR banks, region and mapper information as well as title metadata."
   );
+  p_newline();
+
+  p_header("Usage");
+  p_indent(1, APPNAME " info <rom>");
+  p_newline();
 }
 
 void print_usage_prg() {

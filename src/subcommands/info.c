@@ -9,6 +9,11 @@ info_opts* subcommand_info_parse(int argc, char **argv) {
   };
   */
 
+  if (strcmp(argv[0], "--help") == 0) {
+    print_usage_info();
+    exit(EXIT_SUCCESS);
+  }
+
   strcpy(opts->romfile_path, argv[0]);
 
   /*
