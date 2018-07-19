@@ -5,6 +5,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+// TODO: use PATH_MAX from sys/limits.h here
 #define PATH_LENGTH 1024
 
 enum LogLevel {
