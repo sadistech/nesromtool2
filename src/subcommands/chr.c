@@ -33,6 +33,9 @@ chr_output_format filename_to_chr_output_format(char *filename) {
 chr_opts* subcommand_chr_extract_parse(int argc, char **argv) {
   chr_opts *opts = (chr_opts*)calloc(1, sizeof(chr_opts));
 
+  // default settings
+  opts->width = 16;
+
   static struct option longopts[] = {
     { "help", no_argument, NULL, 'h' },
     { "format", required_argument, NULL, 'f' },
@@ -105,8 +108,8 @@ chr_opts* subcommand_chr_extract_parse(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  printf("Going to open %s and extract bank %d to '%s'\n", opts->romfile_path, opts->bank_index, opts->outfile_path);
-  printf("Format: '%d'\n", opts->format);
+  /* printf("Going to open %s and extract bank %d to '%s'\n", opts->romfile_path, opts->bank_index, opts->outfile_path); */
+  /* printf("Format: '%d'\n", opts->format); */
 
   return opts;
 }
