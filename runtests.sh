@@ -1,10 +1,31 @@
 #! /usr/bin/env bash
 
+## Requires bash 4.x
+
+## Run all tests. Normally this would be run via `make test`
+##
+## This accomplishes the task of running our tests by iterating over each
+## .c file in the tests/ directory and building it, adding 'src' to the include
+## directory path.
+## It should probably rely more on the makefile in some way, but I haven't
+## figured that out, yet.
+##
+## When running tests, be sure to include the "test.h" header which defines
+## some test helpers.
+##
+## 3 environment variables will be made available to all tests being run via
+## this script:
+##   * NRT_TEMP -- a temp directory created for this test and deleted at the end of the run
+##   * NRT_FIXTURE_DIR -- the path to the fixtures directory, where test files live
+##   * NRT_TEST_DIR -- the path to the 'tests' directory. for reasons?
+
 set -euo pipefail
 IFS=$'\n\t'
 
 run_test() {
   local testsrc="$1"
+
+  export NRT_TEMP="$( mktemp -d "/tmp/nrt_test.XXXXXX" )"
 
   local tempfile="$( mktemp /tmp/nrt_test.XXXXXX )"
   test_total=$(( test_total + 1 ))
@@ -26,7 +47,7 @@ run_test() {
     return
   fi
 
-  rm -rf "$tempfile"
+  rm -rf "$tempfile" "$NRT_TEMP"
 
   printf "[ PASS ] %s\n" "$testname"
 }
