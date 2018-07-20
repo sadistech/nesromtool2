@@ -45,8 +45,6 @@ int main() {
 
   nrt_read_title_from_file(rom, header, title);
 
-  printf("title: %s\n", title);
-
   assert(strcmp(title, NEW_TITLE) == 0);
 
   fclose(rom);
