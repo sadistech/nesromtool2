@@ -62,7 +62,11 @@ And most subcommands follow this pattern:
     nrt <subcommand> <action> <rom> [ <options> ... ] [ <action-args> ]
 
 You can get help with the `--help` flag, either as a direct argument to `nrt` or as an argument to any
-subcommand or subcommand's action.
+subcommand or subcommand's action:
+
+    $ nrt --help
+    $ nrt chr --help
+    $ nrt chr extract --help
 
 The remainder of this section will talk about some basic, specific usage.
 
@@ -149,7 +153,7 @@ This repo is licensed with the MIT license. I hope it's useful to you.
 ### Credits, etc.
 
 `nrt` is based on the original `nesromtool` written by Spike Grobstein (me), which utilized a multitude of
-documents found on the 2003 internet, with the originals locations being lost to history. This rewrite relied
+documents found on the 2003 internet, with the originals' locations being lost to history. This rewrite relied
 heavily on the original codebase as well as documentation found on
 [wiki.nesdev.com](https://wiki.nesdev.com/).
 
