@@ -1,8 +1,7 @@
 #include <assert.h>
 #include "nrt.h"
 
-int main()
-{
+int main() {
   nrt_chr_list* list = nrt_chr_list_create();
 
   assert(list->count == 0);
