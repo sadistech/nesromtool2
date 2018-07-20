@@ -22,6 +22,12 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+if [[ "$BASH_VERSION" != 4* ]]; then
+  echo "Requires bash version 4.x. You're running $BASH_VERSION" >&2
+  echo "Please install bash 4.x with your OS's package manager (ie: brew install bash)" >&2
+  exit 1
+fi
+
 run_test() {
   local testsrc="$1"
 
