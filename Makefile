@@ -17,6 +17,7 @@ srcfiles=\
 		$(srcdir)/nrt.c \
 		$(srcdir)/util.c \
 		$(srcdir)/help.c \
+		$(srcdir)/subcommands.c \
 		$(srcdir)/subcommands/info.c \
 		$(srcdir)/subcommands/prg.c \
 		$(srcdir)/subcommands/chr.c \
@@ -50,7 +51,7 @@ $(builtdir):
 	mkdir $(builtdir)
 
 $(nrtbuilt): ./bin $(srcfiles) $(headers) $(srcdir)/nrt_main.c
-	gcc -o $(nrtbuilt) $(srcfiles) $(srcdir)/nrt_main.c  -lpng
+	gcc -o $(nrtbuilt) $(srcfiles) $(srcdir)/nrt_main.c -lpng
 
 $(rombuilder): ./bin $(srcfiles) $(headers) $(srcdir)/rombuilder_main.c
 	gcc -o $(rombuilder) $(srcfiles) $(srcdir)/rombuilder_main.c -lpng

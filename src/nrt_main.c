@@ -12,24 +12,31 @@
 #include "help.h"
 
 int main(int argc, char **argv, char **env) {
+  if (argc == 1) {
+    print_usage();
+    exit(EXIT_SUCCESS);
+  }
+
   char *appname = *(argv++); argc--;
   char *subcommand= *(argv++); argc--;
 
-  if (strcmp(subcommand, "") == 0 ) {
+  if (subcommand[0] == '\0') {
     fprintf(stderr, "Please supply a subcommand.\n");
-    exit(EXIT_FAILURE);
-  } else if (strcmp(subcommand, "help") == 0 || strcmp(subcommand, "--help") == 0) {
     print_usage();
-  } else if (strcmp(subcommand, "info") == 0) {
+    exit(EXIT_FAILURE);
+  } else if (is_subcommand(subcommand, "help", "--help", "-h", NULL)) {
+    print_usage();
+  } else if (is_subcommand(subcommand, "info", NULL)) {
     subcommand_info(argc - 1, argv);
-  } else if (strcmp(subcommand, "chr") == 0) {
+  } else if (is_subcommand(subcommand, "chr", NULL)) {
     subcommand_chr(argc - 1, argv);
-  } else if (strcmp(subcommand, "prg") == 0) {
+  } else if (is_subcommand(subcommand, "prg", NULL)) {
     subcommand_prg(argc - 1, argv);
-  } else if (strcmp(subcommand, "title") == 0) {
+  } else if (is_subcommand(subcommand, "title", NULL)) {
     subcommand_title(argc - 1, argv);
   } else {
     fprintf(stderr, "Unknown subcommand: %s\n", subcommand);
+    print_usage();
     exit(EXIT_FAILURE);
   }
 
