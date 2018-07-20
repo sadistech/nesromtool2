@@ -2,16 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include "nrt.h"
+#include "test.h"
 
 int main() {
-  char* fixture_dir = getenv("NRT_FIXTURE_DIR");
+  test_init();
 
-  char rom_path[512];
-  sprintf(rom_path, "%s/title.nes", fixture_dir);
+  char *rom_path = path_join(fixture_dir, "title.nes");
 
-  FILE* rom = NULL;
-
-  rom = fopen(rom_path, "r");
+  FILE* rom = fopen(rom_path, "r");
 
   assert(rom);
 
@@ -25,4 +23,5 @@ int main() {
   assert( strcmp(title_buf, expected_title) == 0 );
 
   fclose(rom);
+  free(rom_path);
 }
