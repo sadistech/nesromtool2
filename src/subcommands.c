@@ -1,15 +1,22 @@
 #include "subcommands.h"
 
-bool is_subcommand(char *subcommand, char **subcommand_list) {
-  char *c = subcommand_list[0];
+bool is_subcommand(char *subcommand, ...) {
+  va_list aliases;
 
-  while(c) {
-    if (strcmp(subcommand, c) == 0) {
+  va_start(aliases, subcommand);
+
+  char *alias = va_arg(aliases, char*);
+
+  while(alias) {
+    if (strcmp(alias, subcommand) == 0) {
+      va_end(aliases);
       return true;
     }
 
-    c = subcommand++;
+    alias = va_arg(aliases, char*);
   }
+
+  va_end(aliases);
 
   return false;
 }

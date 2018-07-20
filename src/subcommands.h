@@ -8,6 +8,7 @@
 
 #include <stdbool.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include "util.h"
 
@@ -16,6 +17,6 @@
 #include "subcommands/chr.h"
 #include "subcommands/title.h"
 
-bool is_subcommand(char *, char**);
+bool is_subcommand(char *, ...);
 
 #endif
