@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <sys/stat.h>
 
 #include "header.h"
 #include "tile.h"
@@ -21,5 +22,7 @@ int nrt_chr_offset(nrt_header *header, int chr_index);
 bool nrt_chr_index_valid(nrt_header *header, int chr_index);
 int nrt_extract_chr(FILE *rom, nrt_header *header, int index, nrt_chrbank *chr);
 int nrt_replace_chr(FILE *rom, nrt_header *header, int index, nrt_chrbank *chr);
+
+bool nrt_chr_valid_filesize(char *filepath);
 
 #endif
