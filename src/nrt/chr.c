@@ -26,14 +26,6 @@ int nrt_replace_chr(FILE *rom, nrt_header *header, int index, nrt_chrbank *chr) 
   return fwrite(chr, NRT_CHR_BANK_SIZE, 1, rom);
 }
 
-bool nrt_chr_valid_filesize(char *filepath) {
-  struct stat *filestat = (struct stat*)calloc(1, sizeof(struct stat));
-
-  stat(filepath, filestat);
-
-  bool result = filestat->st_size == NRT_CHR_BANK_SIZE;
-
-  free(filestat);
-
-  return result;
+bool nrt_chr_valid_filesize(struct stat *filestat) {
+  return filestat->st_size == NRT_CHR_BANK_SIZE;
 }

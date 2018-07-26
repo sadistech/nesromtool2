@@ -23,6 +23,6 @@ bool nrt_chr_index_valid(nrt_header *header, int chr_index);
 int nrt_extract_chr(FILE *rom, nrt_header *header, int index, nrt_chrbank *chr);
 int nrt_replace_chr(FILE *rom, nrt_header *header, int index, nrt_chrbank *chr);
 
-bool nrt_chr_valid_filesize(char *filepath);
+bool nrt_chr_valid_filesize(struct stat *filestat);
 
 #endif
