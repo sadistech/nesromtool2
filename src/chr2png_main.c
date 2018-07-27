@@ -8,6 +8,7 @@
 
 #include "nrt.h"
 #include "util.h"
+#include "help.h"
 
 /*
  * usage:
@@ -29,7 +30,6 @@ typedef struct options {
   int width;
 } options;
 
-void print_usage_chr2png(void);
 void validate_outdir(char *outdir);
 void validate_chrfile(char *filepath);
 void validate_pngfile(char *filepath);
@@ -66,7 +66,11 @@ int main(int argc, char **argv) {
   while ((ch = getopt_long(argc, argv, "ho:w:", longopts, NULL)) != -1) {
     switch (ch) {
       case 'h':
-        print_usage_chr2png();
+        if (opts->app == app_chr2png) {
+          print_usage_chr2png();
+        } else {
+          print_usage_png2chr();
+        }
         exit(EXIT_SUCCESS);
         break;
 
@@ -104,11 +108,6 @@ int main(int argc, char **argv) {
       printf("Invalid argument.\n");
       exit(EXIT_FAILURE);
   }
-}
-
-void print_usage_chr2png() {
-  printf("Print usage\n");
-  exit(EXIT_SUCCESS);
 }
 
 void validate_outdir(char *outdir) {

@@ -67,4 +67,7 @@ void print_usage_title_get();
 void print_usage_title_set();
 void print_usage_title_remove();
 
+void print_usage_chr2png();
+void print_usage_png2chr();
+
 #endif

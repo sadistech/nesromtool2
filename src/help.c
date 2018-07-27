@@ -492,3 +492,72 @@ void print_usage_title_remove() {
   p_newline();
 }
 
+void print_usage_chr2png() {
+  help_opts *opts = HELP_ALLOC_OPTS;
+  opts->indent = 1;
+
+  static struct help_cols option_cols[] = {
+    "--help", "Display this help",
+    "-w | --width=<width>", "Set the width (in tiles) of the output PNG",
+    "-o | --outdir=<outdir>", "Set the output directory for the output PNG files (default is to output to same directory as source file)",
+    NULL_COL
+  };
+
+  static struct help_cols arg_cols[] = {
+    "<chrfile>", "A raw CHR bank file; possibly exported from a ROM, for example",
+    NULL_COL
+  };
+
+  p_header("chr2png");
+  p_indent(1,
+      "Convert stand-alone CHR bank files into indexed 4-color raster PNG files"
+  );
+  p_newline();
+
+  p_header("Usage");
+  p_indent(1, "chr2png [ <options> ... ] <chrfile> [ <chrfile> ... ]");
+  p_newline();
+
+  p_header("Arguments");
+  p_cols(opts, arg_cols);
+  p_newline();
+
+  p_header("Options");
+  p_cols(opts, option_cols);
+  p_newline();
+}
+
+void print_usage_png2chr() {
+  help_opts *opts = HELP_ALLOC_OPTS;
+  opts->indent = 1;
+
+  static struct help_cols option_cols[] = {
+    "--help", "Display this help",
+    "-o | --outdir=<outdir>", "Set the output directory for the output PNG files (default is to output to same directory as source file)",
+    NULL_COL
+  };
+
+  static struct help_cols arg_cols[] = {
+    "<pngfile>", "An indexed color raster PNG file",
+    NULL_COL
+  };
+
+  p_header("png2chr");
+  p_indent(1,
+      "Convert raster PNG files into raw CHR banks. Input files must be indexed color mode\n"
+      "and only the first 4 colors in the palette will be used"
+  );
+  p_newline();
+
+  p_header("Usage");
+  p_indent(1, "png2chr [ <options> ... ] <pngfile> [ <pngfile> ... ]");
+  p_newline();
+
+  p_header("Arguments");
+  p_cols(opts, arg_cols);
+  p_newline();
+
+  p_header("Options");
+  p_cols(opts, option_cols);
+  p_newline();
+}
