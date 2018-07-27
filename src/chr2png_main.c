@@ -31,6 +31,8 @@ typedef struct options {
 
 void print_usage_chr2png(void);
 void validate_outdir(char *outdir);
+void validate_chrfile(char *filepath);
+void validate_pngfile(char *filepath);
 
 int chr2png(options *opts, int argc, char **argv);
 int png2chr(options *opts, int argc, char **argv);
@@ -153,6 +155,24 @@ void validate_chrfile(char *filepath) {
   }
 }
 
+void validate_pngfile(char *filepath) {
+  struct stat *filestat = (struct stat*)malloc(sizeof(struct stat));
+
+  if (stat(filepath, filestat) != 0) {
+    free(filestat);
+    perror(filepath);
+    exit(EXIT_FAILURE);
+  }
+
+  if (!(filestat->st_mode & S_IFREG)) {
+    free(filestat);
+    fprintf(stderr, "CHR file must be a regular file.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  free(filestat);
+}
+
 int chr2png(options *opts, int argc, char **argv) {
   char *filename = argv[0];
   char output_path[PATH_MAX];
@@ -230,7 +250,87 @@ int chr2png(options *opts, int argc, char **argv) {
 }
 
 int png2chr(options *opts, int argc, char **argv) {
-  printf("png2chr (%d): %s\n", argc, opts->outdir);
+  char *filename = argv[0];
+  char output_path[PATH_MAX];
+
+  validate_outdir(opts->outdir);
+
+  while (filename) {
+    validate_pngfile(filename);
+    char *base_filename = filename_no_ext(basename(filename));
+
+    // first let's figure out the to and from stuff.
+    if (opts->outdir[0] == '\0') {
+      // if the outdir is not specified, it's gonna be outpu to the same place as the original file
+      // so to get the output path for each file,
+      // we need to get the filename sans extension
+      // and the dirname
+      // and then concat dirname, basename, new extension
+      sprintf(output_path, "%s/%s.chr", dirname(filename), base_filename);
+    } else {
+      // the output path is set to somethign
+      sprintf(output_path, "%s/%s.chr", opts->outdir, base_filename);
+    }
+
+    printf("Will convert %s -> %s\n", filename, output_path);
+
+    // read in png to bitmap
+    // convert to chr
+    // write out to file
+
+    FILE *pngfile = fopen(filename, "r");
+
+    if (!pngfile) {
+      perror(filename);
+      exit(EXIT_FAILURE);
+    }
+
+    nrt_tile_bitmap *tiles = (nrt_tile_bitmap*)calloc(NRT_CHR_TILE_COUNT, sizeof(nrt_tile_bitmap));
+
+    if (!nrt_png_to_tiles(pngfile, tiles)) {
+      fprintf(stderr, "Failed to read PNG file: %s\n", filename);
+      fclose(pngfile);
+      exit(EXIT_FAILURE);
+    }
+
+    fclose(pngfile);
+
+    nrt_chrbank *chr_bank = NRT_CHR_ALLOC;
+    nrt_tile *raw_tile = NRT_TILE_ALLOC;
+
+    // convert the bitmap into CHR stuff
+    int i;
+    for (i = 0; i < NRT_CHR_TILE_COUNT; i++) {
+      nrt_bitmap_to_tile(&tiles[i], raw_tile);
+      memcpy(&chr_bank->tile[i], raw_tile, NRT_TILE_SIZE);
+    }
+
+    free(raw_tile);
+    free(tiles);
+
+    // write this out.
+    FILE *outfile = fopen(output_path, "w");
+
+    if (!outfile) {
+      free(chr_bank);
+      perror(output_path);
+      exit(EXIT_FAILURE);
+    }
+
+    if (fwrite(chr_bank, NRT_CHR_BANK_SIZE, 1, outfile) != 1) {
+      free(chr_bank);
+      fclose(outfile);
+      perror(output_path);
+      exit(EXIT_FAILURE);
+    }
+
+    fclose(outfile);
+    free(chr_bank);
+
+    // get next and continue loop.
+    filename = *(++argv);
+  }
+
   return 0;
 }
 
