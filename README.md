@@ -44,14 +44,24 @@ Once that's complete, you should be able to compile the project without issue:
 
     $ make
 
-That should leave you with a file `./bin/nrt` that you can copy somewhere into your `PATH` and start using:
+That should leave you with a series of executables:
 
-    $ cp bin/nrt /usr/local/bin
+ * `nrt` -- the main `nrt` executable; used for working directly with `.nes` ROM files.
+ * `chr2png` -- a tool used to convert standalone CHR bank files to 4-color indexed bitmap PNG files.
+ * `png2chr` -- a tool that does the opposite of `chr2png`: converts indexed color bitmap PNG files into
+     standalone CHR bank files
+ * `nrt_builder` -- a utility for generating "valid" `.nes` ROM files used for internal testing.
+
+You can then copy the executables to a location in your `PATH` so that you can start using the tools.
+
+    $ cp bin/* /usr/local/bin/
 
 > In the future, I may swith to autotools for building so that build issues will be less of a thing and there
 > will also be something like a `make install` process. But that time is not now.
 
 ### Usage
+
+#### `nrt`
 
 `nrt` follows a similar commandline usage pattern throughout:
 
@@ -70,7 +80,7 @@ subcommand or subcommand's action:
 
 The remainder of this section will talk about some basic, specific usage.
 
-#### Getting information about a ROM
+##### Getting information about a ROM
 
 In order to get a dump of information about a ROM file, use the `info` subcommand:
 
@@ -107,7 +117,7 @@ The above output shows that the ROM is "valid" (meaning that it's got a valid he
 correct size based on the fields in the header). It also shows some raw data about the state of the header. In
 the future, the format of this output will be improved.
 
-#### Extracting a PNG of graphics
+##### Extracting a PNG of graphics
 
 `nrt` also provides a method of extracting a PNG file from a ROM. This is done via the `chr` subcommand (most NES
 ROMs use special "CHR" banks to store graphics in the form of 256 tile blocks of 8x8 sprites).
@@ -128,7 +138,7 @@ based on the file extension of the `<outfile>`.
 > replacing a bank with a png file, the png file MUST be indexed color and will use the first 4 (0-3)
 > colors in the palette only.
 
-#### Replacing the bank with a modified PNG
+##### Replacing the bank with a modified PNG
 
 Once you've modified the png in your graphics editor of choice, you can replace the entire CHR bank with the
 updated file. Just make sure that the file is still indexed color and you haven't use any but the original 4
@@ -145,6 +155,29 @@ For example:
 By default, `nrt` will overwrite the original ROM file, but by using the `--outfile` argument, we can tell it
 to write to a different location. This is recommended since you never know when you are gonna corrupt your
 ROM.
+
+#### `chr2png`
+
+The usage of `chr2png` is pretty straight-forward. Similar to `nrt chr extract`, it accepts a `--width`
+argument for specifying the number of tiles wide you want the resulting PNG to be, defaulting to 16 tiles. By
+default, it will output the `.png` files to the same directory as the original file, but can accept an
+`--outdir=<path>` argument to change the output directory.
+
+Usage for the tool is:
+
+    chr2png [ --width=<width> ] [ --outdir=<path> ] <chrfile> [ <chrfile> ... ]
+
+#### `png2chr`
+
+The `png2chr` utility is the opposite of `chr2png` in that it converts a PNG file to a CHR bank. The input PNG
+must be indexed color and only the first 4 colors of the palette will be used when converting.
+
+This tool is most useful when writing ROMs as part of the `Makefile` in that one can keep bitmap PNGs in the
+project and convert them to CHR banks before the compilation step.
+
+Usage for the tool is:
+
+    png2chr [ --outdir=<path> ] <pngfile> [ <pngfile> ... ]
 
 ### License
 
