@@ -5,6 +5,8 @@ builtdir=./bin
 
 nrtbuilt=$(builtdir)/nrt
 rombuilder=$(builtdir)/nrt_builder
+chr2png=$(builtdir)/chr2png
+png2chr=$(builtdir)/png2chr
 
 srcfiles=\
 		$(libsrcdir)/error.c \
@@ -45,7 +47,7 @@ testfiles=$(srcdir)/test.c
 testheaders=$(libsrcdir)/test.h
 builttest="./test_nrt"
 
-all: $(nrtbuilt) $(rombuilder)
+all: $(nrtbuilt) $(rombuilder) $(chr2png) $(png2chr)
 
 $(builtdir):
 	mkdir $(builtdir)
@@ -55,6 +57,12 @@ $(nrtbuilt): ./bin $(srcfiles) $(headers) $(srcdir)/nrt_main.c
 
 $(rombuilder): ./bin $(srcfiles) $(headers) $(srcdir)/rombuilder_main.c
 	gcc -o $(rombuilder) $(srcfiles) $(srcdir)/rombuilder_main.c -lpng
+
+$(chr2png): ./bin $(srcgiles) $(headers) $(srcdir)/chr2png_main.c
+	gcc -o $(chr2png) $(srcfiles) $(srcdir)/chr2png_main.c -lpng
+
+$(png2chr): ./bin $(srcgiles) $(headers) $(srcdir)/chr2png_main.c
+	gcc -o $(png2chr) $(srcfiles) $(srcdir)/chr2png_main.c -lpng
 
 bitmaptest: ./bin $(srcfiles) $(headers) $(srcdir)/bitmap_main.c
 	gcc -g -o bin/bitmap $(srcfiles) $(srcdir)/bitmap_main.c -lpng
