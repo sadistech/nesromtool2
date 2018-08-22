@@ -12,7 +12,7 @@
 #define NRT_CHR_BANK_SIZE 8192
 #define NRT_CHR_TILE_COUNT 512 /* NRT_CHR_BANK_SIZE / NRT_TILE_SIZE */
 
-#define NRT_CHR_ALLOC (nrt_chrbank*)malloc(sizeof(nrt_chrbank))
+#define NRT_CHR_ALLOC (nrt_chrbank*)calloc(1, sizeof(nrt_chrbank))
 
 typedef struct nrt_chrbank {
   nrt_tile tile[NRT_CHR_TILE_COUNT];
