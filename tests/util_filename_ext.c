@@ -13,7 +13,7 @@ int main() {
   const char *ext_filename_with_ext = filename_ext(filename_with_ext);
   const char *ext_filename_with_dots = filename_ext(filename_with_dots);
 
-  assert(ext_filename_w_no_ext[0] == '\0');
+  assert(ext_filename_no_ext[0] == '\0');
   assert(strcmp(ext_filename_with_ext, "txt") == 0);
   assert(strcmp(ext_filename_with_dots, "txt") == 0);
 }
