@@ -284,9 +284,9 @@ int png2chr(options *opts, int argc, char **argv) {
       exit(EXIT_FAILURE);
     }
 
-    nrt_tile_bitmap *tiles = (nrt_tile_bitmap*)calloc(NRT_CHR_TILE_COUNT, sizeof(nrt_tile_bitmap));
+    nrt_tile_bitmap_lockup *lockup = (nrt_tile_bitmap_lockup*)calloc(NRT_CHR_TILE_COUNT, sizeof(nrt_tile_bitmap_lockup));
 
-    if (!nrt_png_to_tiles(pngfile, tiles)) {
+    if (!nrt_png_to_tiles(pngfile, lockup)) {
       fprintf(stderr, "Failed to read PNG file: %s\n", filename);
       fclose(pngfile);
       exit(EXIT_FAILURE);
@@ -300,12 +300,13 @@ int png2chr(options *opts, int argc, char **argv) {
     // convert the bitmap into CHR stuff
     int i;
     for (i = 0; i < NRT_CHR_TILE_COUNT; i++) {
-      nrt_bitmap_to_tile(&tiles[i], raw_tile);
+      nrt_bitmap_to_tile(&lockup->bitmaps[i], raw_tile);
       memcpy(&chr_bank->tile[i], raw_tile, NRT_TILE_SIZE);
     }
 
     free(raw_tile);
-    free(tiles);
+    free(lockup->bitmaps);
+    free(lockup);
 
     // write this out.
     FILE *outfile = fopen(output_path, "w");

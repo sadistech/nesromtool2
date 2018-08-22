@@ -296,9 +296,9 @@ void subcommand_chr_replace(chr_opts *opts) {
       exit(EXIT_FAILURE);
     }
 
-    nrt_tile_bitmap *tiles = (nrt_tile_bitmap*)calloc(NRT_CHR_TILE_COUNT, sizeof(nrt_tile_bitmap));
+    nrt_tile_bitmap_lockup *lockup= (nrt_tile_bitmap_lockup*)calloc(NRT_CHR_TILE_COUNT, sizeof(nrt_tile_bitmap_lockup));
 
-    if (! nrt_png_to_tiles(pngfile, tiles)) {
+    if (! nrt_png_to_tiles(pngfile, lockup)) {
       fprintf(stderr, "Failed to read in PNG file: %s\n", opts->sourcefile_path);
       fclose(pngfile);
       free(opts);
@@ -309,12 +309,13 @@ void subcommand_chr_replace(chr_opts *opts) {
     nrt_tile *raw_tile = NRT_TILE_ALLOC;
     int i;
     for(i = 0; i < NRT_CHR_TILE_COUNT; i++) {
-      nrt_bitmap_to_tile(&tiles[i], raw_tile);
+      nrt_bitmap_to_tile(&lockup->bitmaps[i], raw_tile);
       memcpy(&chr_bank->tile[i], raw_tile, NRT_TILE_SIZE);
     }
 
     free(raw_tile);
-    free(tiles);
+    free(lockup->bitmaps);
+    free(lockup);
   } else if (opts->format == raw_format) {
     printf("Not implemented\n");
     exit(EXIT_FAILURE);

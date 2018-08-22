@@ -108,7 +108,7 @@ bool nrt_tiles_to_png(nrt_tile_bitmap *tiles, int count, int width, FILE *outfil
   return true;
 }
 
-bool nrt_png_to_tiles(FILE *png_file, nrt_tile_bitmap *tiles) {
+bool nrt_png_to_tiles(FILE *png_file, nrt_tile_bitmap_lockup *lockup) {
   char header[NRT_PNG_SIG_SIZE];
 
   fseek(png_file, 0, SEEK_SET);
@@ -163,6 +163,11 @@ bool nrt_png_to_tiles(FILE *png_file, nrt_tile_bitmap *tiles) {
   int tiles_height = height / NRT_TILE_HEIGHT_PX;
   int tiles_count = tiles_width * tiles_height;
 
+  // configure the lockup and allocate the memory
+  lockup->count = tiles_count;
+  lockup->width = tiles_width;
+  lockup->bitmaps = (nrt_tile_bitmap*)calloc(tiles_count, sizeof(nrt_tile_bitmap));
+
   /* png_bytep row = (png_bytep)malloc(tiles_width * NRT_TILE_WIDTH_PX * bit_depth / CHAR_BIT * sizeof(png_byte)); */
   png_bytepp row_pointers = png_get_rows(png_ptr, info_ptr);
   png_bytep row;
@@ -189,7 +194,7 @@ bool nrt_png_to_tiles(FILE *png_file, nrt_tile_bitmap *tiles) {
           // get the current byte from the png row
           px = row[tile * NRT_TILE_WIDTH_PX + tile_px];
 
-          current_tile = &tiles[tile_row * tiles_width + tile];
+          current_tile = &lockup->bitmaps[tile_row * tiles_width + tile];
           current_tile->pixels[px_row * NRT_TILE_WIDTH_PX + tile_px] = (char)px;
         }
       }
