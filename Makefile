@@ -68,9 +68,6 @@ $(png2chr): ./bin $(srcfiles) $(headers) $(srcdir)/chr2png_main.c
 $(tilec): ./bin $(srcfiles) $(headers) $(srcdir)/tilec_main.c
 	gcc -o $(tilec) $(srcfiles) $(srcdir)/tilec_main.c -lpng
 
-bitmaptest: ./bin $(srcfiles) $(headers) $(srcdir)/bitmap_main.c
-	gcc -g -o bin/bitmap $(srcfiles) $(srcdir)/bitmap_main.c -lpng
-
 run: $(nrtbuilt) all
 	$(nrtbuilt) verify ./mario3.nes
 
