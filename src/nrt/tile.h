@@ -14,6 +14,8 @@
 
 #define NRT_TILE_CHANNEL_SIZE 8
 
+#define NRT_TILE_TABLE_SIZE 256 /* the number of tiles in a single table */
+
 #define NRT_TILE_BITMAP_BITDEPTH 2
 #define NRT_TILE_BITMAP_PALETTE_SIZE 4
 
