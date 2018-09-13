@@ -534,6 +534,7 @@ void print_usage_png2chr() {
   static struct help_cols option_cols[] = {
     "--help", "Display this help",
     "-o | --outdir=<outdir>", "Set the output directory for the output PNG files (default is to output to same directory as source file)",
+    "-s | --size=<size>", "Set the number of tiles in the target CHR file. This can be an integer value (from 1 up to 512) or 'table' for 256 or 'chr' for 512."
     NULL_COL
   };
 
