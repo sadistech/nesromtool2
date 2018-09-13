@@ -119,7 +119,7 @@ void tilec(tilec_opts *opts) {
   // the tile that we're currently working with
   nrt_tile *tile = NRT_TILE_ALLOC;
 
-  nrt_tile_bitmap *bitmaps = (nrt_tile_bitmap*)calloc(NRT_CHR_TILE_COUNT, sizeof(nrt_tile_bitmap));
+  nrt_tile_bitmap *bitmaps = (nrt_tile_bitmap*)calloc(NRT_TILE_TABLE_SIZE, sizeof(nrt_tile_bitmap));
 
   printf("Will write %s\n", opts->outfile);
 
@@ -164,7 +164,7 @@ void tilec(tilec_opts *opts) {
       memcpy(&(chr->tile[bank_cursor]), tile, NRT_TILE_SIZE);
       bank_cursor++;
 
-      if (bank_cursor > NRT_CHR_TILE_COUNT) {
+      if (bank_cursor > NRT_TILE_TABLE_SIZE) {
         fprintf(stderr, "TOO MANY SPRITES (%d)\n", bank_cursor);
         exit(EXIT_FAILURE);
       }
@@ -175,7 +175,7 @@ void tilec(tilec_opts *opts) {
   }
 
   // convert back into bitmaps
-  for (i = 0; i < NRT_CHR_TILE_COUNT; i++) {
+  for (i = 0; i < NRT_TILE_TABLE_SIZE; i++) {
     nrt_tile_to_bitmap(&chr->tile[i], &bitmaps[i]);
   }
 
@@ -191,7 +191,7 @@ void tilec(tilec_opts *opts) {
   }
 
   // write to file
-  nrt_tiles_to_png(bitmaps, NRT_CHR_TILE_COUNT, 16, ofile);
+  nrt_tiles_to_png(bitmaps, NRT_TILE_TABLE_SIZE, 16, ofile);
 
   fclose(ofile);
 

@@ -28,11 +28,13 @@ typedef struct options {
   apptype app;
   char outdir[PATH_MAX];
   int width;
+  int size; /* expected number of tiles in the PNG file */
 } options;
 
 void validate_outdir(char *outdir);
 void validate_chrfile(char *filepath);
 void validate_pngfile(char *filepath);
+int chr_tile_count(char *chrfile);
 
 int chr2png(options *opts, int argc, char **argv);
 int png2chr(options *opts, int argc, char **argv);
@@ -58,12 +60,13 @@ int main(int argc, char **argv) {
     { "help", no_argument, NULL, 'h' },
     { "outdir", required_argument, NULL, 'o' },
     { "width", required_argument, NULL, 'w' },
+    { "size", required_argument, NULL, 's' },
     { NULL, 0, NULL, 0 }
   };
 
   int ch;
 
-  while ((ch = getopt_long(argc, argv, "ho:w:", longopts, NULL)) != -1) {
+  while ((ch = getopt_long(argc, argv, "ho:w:s:", longopts, NULL)) != -1) {
     switch (ch) {
       case 'h':
         if (opts->app == app_chr2png) {
@@ -86,6 +89,25 @@ int main(int argc, char **argv) {
         opts->width = atoi(optarg);
         break;
 
+      case 's':
+        // if the value is 'chr' then that's 512
+        // if the value is 'table' then it's 256
+        // otherwise it should be a number
+        if (strncmp(optarg, "chr", 4) == 0) {
+          opts->size = 512;
+        } else if (strncmp(optarg, "table", 6) == 0) {
+          opts->size = 256;
+        } else {
+          opts->size = atoi(optarg);
+
+          if (opts->size < 0 || opts->size > 512) {
+            fprintf(stderr, "Please choose a value between 0 and 512\n");
+            exit(EXIT_FAILURE);
+          }
+        }
+
+        break;
+
       case 0:
         break;
       default:
@@ -96,6 +118,10 @@ int main(int argc, char **argv) {
 
   argc -= optind;
   argv += optind;
+
+  if (opts->size == 0) {
+    opts->size = 512;
+  }
 
   switch (opts->app) {
     case app_chr2png:
@@ -146,12 +172,6 @@ void validate_chrfile(char *filepath) {
     fprintf(stderr, "CHR file must be a regular file.\n");
     exit(EXIT_FAILURE);
   }
-
-  if (!nrt_chr_valid_filesize(filestat)) {
-      fprintf(stderr, "CHR file does not appear to be a CHR file (incorrect filesize: %lld bytes; must be exactly %d bytes)\n", filestat->st_size, NRT_CHR_BANK_SIZE);
-    free(filestat);
-    exit(EXIT_FAILURE);
-  }
 }
 
 void validate_pngfile(char *filepath) {
@@ -170,6 +190,27 @@ void validate_pngfile(char *filepath) {
   }
 
   free(filestat);
+}
+
+int chr_tile_count(char *chrfile) {
+  struct stat *chrfile_stat = (struct stat*)malloc(sizeof(struct stat));
+
+  if (stat(chrfile, chrfile_stat) != 0) {
+    free(chrfile_stat);
+    perror(chrfile);
+    exit(EXIT_FAILURE);
+  }
+
+  int size = chrfile_stat->st_size;
+  free(chrfile_stat);
+
+  // the file must be a size that's a multiple of 16 (the size of a tile in CHR memory)
+  if (size % NRT_TILE_SIZE != 0) {
+    fprintf(stderr, "File is the wrong size. It is %d bytes and must be a multiple of %d.\n", size, NRT_TILE_SIZE);
+    exit(EXIT_FAILURE);
+  }
+
+  return size / NRT_TILE_SIZE;
 }
 
 int chr2png(options *opts, int argc, char **argv) {
@@ -209,9 +250,14 @@ int chr2png(options *opts, int argc, char **argv) {
       exit(EXIT_FAILURE);
     }
 
-    nrt_chrbank *chr = (nrt_chrbank*)malloc(sizeof(nrt_chrbank));
+    nrt_chrbank *chr = NRT_CHR_ALLOC;
+    /* nrt_chrbank *chr = (nrt_chrbank*)malloc(sizeof(nrt_chrbank)); */
 
-    if (fread(chr, NRT_CHR_BANK_SIZE, 1, chrfile) != 1) {
+    // find out how many tiles are in this chr
+    // only read that much
+    int tile_count = chr_tile_count(filename);
+
+    if (fread(chr, NRT_TILE_SIZE, tile_count, chrfile) != tile_count) {
       free(chr);
       fclose(chrfile);
       fprintf(stderr, "Failed to read CHR bank due to an unknown error.\n");
@@ -220,9 +266,9 @@ int chr2png(options *opts, int argc, char **argv) {
 
     fclose(chrfile);
 
-    nrt_tile_bitmap *bitmaps = (nrt_tile_bitmap*)malloc(NRT_CHR_TILE_COUNT * sizeof(nrt_tile_bitmap));
+    nrt_tile_bitmap *bitmaps = (nrt_tile_bitmap*)calloc(tile_count, sizeof(nrt_tile_bitmap));
     int i;
-    for (i = 0; i < NRT_CHR_TILE_COUNT; i++) {
+    for (i = 0; i < tile_count; i++) {
       nrt_tile_to_bitmap(&chr->tile[i], &bitmaps[i]);
     }
 
@@ -236,7 +282,7 @@ int chr2png(options *opts, int argc, char **argv) {
       exit(EXIT_FAILURE);
     }
 
-    nrt_tiles_to_png(bitmaps, NRT_CHR_TILE_COUNT, opts->width, outfile);
+    nrt_tiles_to_png(bitmaps, tile_count, opts->width, outfile);
 
     fclose(outfile);
     free(bitmaps);
@@ -284,7 +330,7 @@ int png2chr(options *opts, int argc, char **argv) {
       exit(EXIT_FAILURE);
     }
 
-    nrt_tile_bitmap_lockup *lockup = (nrt_tile_bitmap_lockup*)calloc(NRT_CHR_TILE_COUNT, sizeof(nrt_tile_bitmap_lockup));
+    nrt_tile_bitmap_lockup *lockup = (nrt_tile_bitmap_lockup*)calloc(opts->size, sizeof(nrt_tile_bitmap_lockup));
 
     if (!nrt_png_to_tiles(pngfile, lockup)) {
       fprintf(stderr, "Failed to read PNG file: %s\n", filename);
@@ -294,12 +340,19 @@ int png2chr(options *opts, int argc, char **argv) {
 
     fclose(pngfile);
 
+    if (lockup->count > opts->size) {
+      fprintf(stderr, "Incoming image is larger than the expected size (%d > %d tiles)\n", lockup->count, opts->size);
+      free(lockup->bitmaps);
+      free(lockup);
+      exit(EXIT_FAILURE);
+    }
+
     nrt_chrbank *chr_bank = NRT_CHR_ALLOC;
     nrt_tile *raw_tile = NRT_TILE_ALLOC;
 
     // convert the bitmap into CHR stuff
     int i;
-    for (i = 0; i < NRT_CHR_TILE_COUNT; i++) {
+    for (i = 0; i < lockup->count; i++) {
       nrt_bitmap_to_tile(&lockup->bitmaps[i], raw_tile);
       memcpy(&chr_bank->tile[i], raw_tile, NRT_TILE_SIZE);
     }
@@ -317,7 +370,7 @@ int png2chr(options *opts, int argc, char **argv) {
       exit(EXIT_FAILURE);
     }
 
-    if (fwrite(chr_bank, NRT_CHR_BANK_SIZE, 1, outfile) != 1) {
+    if (fwrite(chr_bank, NRT_TILE_SIZE, opts->size, outfile) != opts->size) {
       free(chr_bank);
       fclose(outfile);
       perror(output_path);
