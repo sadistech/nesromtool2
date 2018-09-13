@@ -21,11 +21,11 @@
 
 #define NRT_PNG_SIG_SIZE 8
 
-#define NRT_TILE_ALLOC (nrt_tile*)malloc(sizeof(nrt_tile))
+#define NRT_TILE_ALLOC (nrt_tile*)calloc(1, sizeof(nrt_tile))
 
 #define NRT_TILE_BITMAP_SIZE (NRT_TILE_WIDTH_PX * NRT_TILE_WIDTH_PX)
 
-#define NRT_TILE_BITMAP_ALLOC (nrt_tile_bitmap*)malloc(sizeof(nrt_tile_bitmap))
+#define NRT_TILE_BITMAP_ALLOC (nrt_tile_bitmap*)calloc(1, sizeof(nrt_tile_bitmap))
 
 #define NRT_GET_BIT(bit_index, row_bits) (row_bits >> (7 - bit_index) & 1)
 
