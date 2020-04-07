@@ -22,7 +22,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-if [[ "$BASH_VERSION" != 4* ]]; then
+if [[ "$BASH_VERSION" != 4* && "$BASH_VERSION" != 5* ]]; then
   echo "Requires bash version 4.x. You're running $BASH_VERSION" >&2
   echo "Please install bash 4.x with your OS's package manager (ie: brew install bash)" >&2
   exit 1
