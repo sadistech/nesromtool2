@@ -8,6 +8,7 @@ clone:
 steps:
   - name: test
     image: docker.home.spike.cx/node-buildbox:12.x
+    pull: always
     commands:
       - make test
 
