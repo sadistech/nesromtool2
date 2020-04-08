@@ -6,6 +6,11 @@ clone:
   deapth: 1
 
 steps:
+  - name: preflight
+    image: alpine/git
+    commands:
+      - chown -R 1000:1000 .
+
   - name: test
     image: docker.home.spike.cx/node-buildbox:12.x
     pull: always
