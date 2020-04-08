@@ -12,3 +12,8 @@ steps:
     commands:
       - make test
 
+  - name: build
+    image: docker.home.spike.cx/node-buildbox:12.x
+    commands:
+      - make CFLAGS=-static
+
