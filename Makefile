@@ -9,6 +9,8 @@ chr2png=$(builtdir)/chr2png
 png2chr=$(builtdir)/png2chr
 tilec=$(builtdir)/tilec
 
+CFLAGS=
+
 srcfiles=\
 		$(libsrcdir)/error.c \
 		$(libsrcdir)/util.c \
@@ -54,19 +56,19 @@ $(builtdir):
 	mkdir $(builtdir)
 
 $(nrtbuilt): ./bin $(srcfiles) $(headers) $(srcdir)/nrt_main.c
-	gcc -o $(nrtbuilt) $(srcfiles) $(srcdir)/nrt_main.c -lpng
+	gcc -o $(nrtbuilt) $(srcfiles) $(srcdir)/nrt_main.c $(CFLAGS) -lpng -lm -lz
 
 $(rombuilder): ./bin $(srcfiles) $(headers) $(srcdir)/rombuilder_main.c
-	gcc -o $(rombuilder) $(srcfiles) $(srcdir)/rombuilder_main.c -lpng
+	gcc -o $(rombuilder) $(srcfiles) $(srcdir)/rombuilder_main.c $(CFLAGS) -lpng -lm -lz
 
 $(chr2png): ./bin $(srcfiles) $(headers) $(srcdir)/chr2png_main.c
-	gcc -o $(chr2png) $(srcfiles) $(srcdir)/chr2png_main.c -lpng
+	gcc -o $(chr2png) $(srcfiles) $(srcdir)/chr2png_main.c $(CFLAGS) -lpng -lm -lz
 
 $(png2chr): ./bin $(srcfiles) $(headers) $(srcdir)/chr2png_main.c
-	gcc -o $(png2chr) $(srcfiles) $(srcdir)/chr2png_main.c -lpng
+	gcc -o $(png2chr) $(srcfiles) $(srcdir)/chr2png_main.c $(CFLAGS) -lpng -lm -lz
 
 $(tilec): ./bin $(srcfiles) $(headers) $(srcdir)/tilec_main.c
-	gcc -o $(tilec) $(srcfiles) $(srcdir)/tilec_main.c -lpng
+	gcc -o $(tilec) $(srcfiles) $(srcdir)/tilec_main.c $(CFLAGS) -lpng -lm -lz
 
 run: $(nrtbuilt) all
 	$(nrtbuilt) verify ./mario3.nes
