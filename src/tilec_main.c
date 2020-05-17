@@ -59,7 +59,7 @@ tilec_opts* parse_opts(int argc, char **argv) {
   static struct option longopts[] = {
     { "help", no_argument, NULL, 'h' },
     { "outfile", required_argument, NULL, 'o' },
-    { "varvile", required_argument, NULL, 'V' },
+    { "varfile", required_argument, NULL, 'V' },
     { NULL, 0, NULL, 0 }
   };
 
